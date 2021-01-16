@@ -1,0 +1,218 @@
+bitimage/deeplearning/adapters/mappers/ImageClassifierMapper.java
+ bitimage.deeplearning.adapters.mappers.ImageClassifierMapper
+bitimage/storage/aws/S3FileSystem.java
+ bitimage.storage.aws.S3FileSystem
+bitimage/events/ImagesUploadedEventHandler.java
+ bitimage.events.ImagesUploadedEventHandler
+bitimage/storage/pg/query/Transaction.java
+ bitimage.storage.pg.query.Transaction
+bitimage/transport/adapters/dto/ImagesDTO.java
+ bitimage.transport.adapters.dto.ImagesDTO
+bitimage/storage/adapters/datastores/UserStore.java
+ bitimage.storage.adapters.datastores.UserStore
+bitimage/storage/adapters/dto/TagDTO.java
+ bitimage.storage.adapters.dto.TagDTO
+bitimage/messaging/beanstalk/IBeanstalkEnv.java
+ bitimage.messaging.beanstalk.IBeanstalkEnv
+bitimage/messaging/beanstalk/QueueMessage.java
+ bitimage.messaging.beanstalk.QueueMessage
+bitimage/storage/adapters/dto/LabelDTO.java
+ bitimage.storage.adapters.dto.LabelDTO
+bitimage/storage/aws/AwsExceptionTranslator.java
+ bitimage.storage.aws.AwsExceptionTranslator
+bitimage/storage/adapters/dto/ImageDTO.java
+ bitimage.storage.adapters.dto.ImageDTO
+bitimage/transport/middleware/ITokenChecker.java
+ bitimage.transport.middleware.ITokenChecker
+bitimage/domain/analysis/entities/StoreImageLabels.java
+ bitimage.domain.analysis.entities.StoreImageLabels
+bitimage/transport/controllers/BaseController.java
+ bitimage.transport.controllers.BaseController
+ bitimage.transport.controllers.IRequestHandler
+bitimage/domain/uploading/exceptions/UserNotFoundException.java
+ bitimage.domain.uploading.exceptions.UserNotFoundException
+bitimage/domain/analysis/services/ImageAnalysisService.java
+ bitimage.domain.analysis.services.ImageAnalysisService
+bitimage/domain/uploading/exceptions/ImageNotFoundException.java
+ bitimage.domain.uploading.exceptions.ImageNotFoundException
+bitimage/storage/adapters/dto/FileMetadataDTO.java
+ bitimage.storage.adapters.dto.FileMetadataDTO
+bitimage/domain/common/entities/EntityID.java
+ bitimage.domain.common.entities.EntityID
+bitimage/storage/pg/resultset/ExistsResultSetMapper.java
+ bitimage.storage.pg.resultset.ExistsResultSetMapper
+bitimage/storage/pg/query/QueryExecutor.java
+ bitimage.storage.pg.query.QueryExecutor
+bitimage/storage/adapters/mappers/LabelStoreMapper.java
+ bitimage.storage.adapters.mappers.LabelStoreMapper
+bitimage/domain/analysis/entities/ExtractImageLabels.java
+ bitimage.domain.analysis.entities.ExtractImageLabels
+bitimage/transport/adapters/dto/UserDTO.java
+ bitimage.transport.adapters.dto.UserDTO
+bitimage/domain/analysis/commands/ExtractImageContentsCmd.java
+ bitimage.domain.analysis.commands.ExtractImageContentsCmd
+bitimage/transport/adapters/dto/TagDTO.java
+ bitimage.transport.adapters.dto.TagDTO
+bitimage/transport/adapters/mappers/UserControllerMapper.java
+ bitimage.transport.adapters.mappers.UserControllerMapper
+bitimage/storage/adapters/datastores/LabelStore.java
+ bitimage.storage.adapters.datastores.LabelStore
+bitimage/messaging/beanstalk/BeanstalkMessageQueue.java
+ bitimage.messaging.beanstalk.BeanstalkMessageQueue
+bitimage/transport/middleware/ITokenCheckerEnv.java
+ bitimage.transport.middleware.ITokenCheckerEnv
+bitimage/regex/RegexPatterns.java
+ bitimage.regex.RegexPatterns
+bitimage/storage/pg/query/SQLQuery.java
+ bitimage.storage.pg.query.SQLQuery
+bitimage/storage/pg/resultset/ImageResultSetMapper.java
+ bitimage.storage.pg.resultset.ImageResultSetMapper
+bitimage/transport/controllers/BaseEndpoints.java
+ bitimage.transport.controllers.BaseEndpoints
+bitimage/storage/exceptions/StorageObjectNotFoundException.java
+ bitimage.storage.exceptions.StorageObjectNotFoundException
+bitimage/transport/errors/ErrorResponses.java
+ bitimage.transport.errors.ErrorResponses
+bitimage/domain/uploading/services/UserService.java
+ bitimage.domain.uploading.services.UserService
+bitimage/events/UserDeletedEventHandler.java
+ bitimage.events.UserDeletedEventHandler
+bitimage/env/EnvReader.java
+ bitimage.env.EnvReader
+bitimage/deeplearning/aws/AwsImageClassifier.java
+ bitimage.deeplearning.aws.AwsImageClassifier
+bitimage/storage/aws/AwsConstants.java
+ bitimage.storage.aws.AwsConstants
+bitimage/transport/middleware/RemoteTokenChecker.java
+ bitimage.transport.middleware.RemoteTokenChecker
+bitimage/domain/uploading/ports/IImageStore.java
+ bitimage.domain.uploading.ports.IImageStore
+bitimage/storage/adapters/datastores/ImageStore.java
+ bitimage.storage.adapters.datastores.ImageStore
+bitimage/storage/dao/ImageDAO.java
+ bitimage.storage.dao.ImageDAO
+bitimage/storage/dao/LabelDAO.java
+ bitimage.storage.dao.LabelDAO
+bitimage/storage/dao/DAOFactory.java
+ bitimage.storage.dao.DAOFactory
+bitimage/domain/analysis/ports/IImageClassifier.java
+ bitimage.domain.analysis.ports.IImageClassifier
+bitimage/domain/uploading/entities/NullImageMetadata.java
+ bitimage.domain.uploading.entities.NullImageMetadata
+bitimage/transport/errors/HttpExceptionHandler.java
+ bitimage.transport.errors.HttpExceptionHandler
+bitimage/messaging/adapters/connectors/MessageReader.java
+ bitimage.messaging.adapters.connectors.MessageReader
+bitimage/domain/uploading/exceptions/ImageFormatInvalidException.java
+ bitimage.domain.uploading.exceptions.ImageFormatInvalidException
+bitimage/storage/pg/resultset/ImageExpandedViewResultSetMapper.java
+ bitimage.storage.pg.resultset.ImageExpandedViewResultSetMapper
+ bitimage.storage.pg.resultset.ImageExpandedViewResultSetMapper$1
+ bitimage.storage.pg.resultset.ImageExpandedViewResultSetMapper$2
+bitimage/domain/common/entities/Entity.java
+ bitimage.domain.common.entities.Entity
+bitimage/messaging/adapters/connectors/MessagePublisher.java
+ bitimage.messaging.adapters.connectors.MessagePublisher
+bitimage/domain/analysis/entities/CleanImageLabels.java
+ bitimage.domain.analysis.entities.CleanImageLabels
+bitimage/domain/uploading/exceptions/UserAlreadyExistsException.java
+ bitimage.domain.uploading.exceptions.UserAlreadyExistsException
+bitimage/domain/uploading/services/ImageUploadService.java
+ bitimage.domain.uploading.services.ImageUploadService
+bitimage/domain/sharedkernel/entities/NullImage.java
+ bitimage.domain.sharedkernel.entities.NullImage
+bitimage/domain/uploading/exceptions/ImageSizeExceededException.java
+ bitimage.domain.uploading.exceptions.ImageSizeExceededException
+bitimage/transport/controllers/ImageController.java
+ bitimage.transport.controllers.ImageController
+bitimage/storage/exceptions/StorageObjectAlreadyExistsException.java
+ bitimage.storage.exceptions.StorageObjectAlreadyExistsException
+bitimage/transport/adapters/dto/ImageUploadUrlsDTO.java
+ bitimage.transport.adapters.dto.ImageUploadUrlsDTO
+bitimage/transport/adapters/mappers/ImageControllerMapper.java
+ bitimage.transport.adapters.mappers.ImageControllerMapper
+bitimage/transport/adapters/dto/SearchImageDTO.java
+ bitimage.transport.adapters.dto.SearchImageDTO
+bitimage/events/mappers/EventHandlerMapper.java
+ bitimage.events.mappers.EventHandlerMapper
+bitimage/domain/sharedkernel/entities/Label.java
+ bitimage.domain.sharedkernel.entities.Label
+bitimage/storage/dao/UserDAO.java
+ bitimage.storage.dao.UserDAO
+bitimage/domain/analysis/entities/IFilter.java
+ bitimage.domain.analysis.entities.IFilter
+bitimage/domain/uploading/exceptions/ImageAlreadyExistsException.java
+ bitimage.domain.uploading.exceptions.ImageAlreadyExistsException
+bitimage/domain/uploading/entities/FileSize.java
+ bitimage.domain.uploading.entities.FileSize
+bitimage/domain/uploading/events/UserDeletedEvent.java
+ bitimage.domain.uploading.events.UserDeletedEvent
+bitimage/storage/adapters/dto/UserDTO.java
+ bitimage.storage.adapters.dto.UserDTO
+bitimage/domain/analysis/ports/ILabelStore.java
+ bitimage.domain.analysis.ports.ILabelStore
+bitimage/messaging/beanstalk/NullQueueMessage.java
+ bitimage.messaging.beanstalk.NullQueueMessage
+bitimage/events/IEventHandler.java
+ bitimage.events.IEventHandler
+bitimage/storage/aws/IAwsEnv.java
+ bitimage.storage.aws.IAwsEnv
+bitimage/storage/pg/resultset/ResultSetMapper.java
+ bitimage.storage.pg.resultset.ResultSetMapper
+bitimage/domain/common/events/IDomainEvent.java
+ bitimage.domain.common.events.IDomainEvent
+bitimage/domain/uploading/commands/CreateImageCmd.java
+ bitimage.domain.uploading.commands.CreateImageCmd
+bitimage/domain/uploading/events/ImagesUploadedEvent.java
+ bitimage.domain.uploading.events.ImagesUploadedEvent
+bitimage/storage/adapters/mappers/UserStoreMapper.java
+ bitimage.storage.adapters.mappers.UserStoreMapper
+bitimage/storage/adapters/mappers/ImageStoreMapper.java
+ bitimage.storage.adapters.mappers.ImageStoreMapper
+bitimage/wire/Container.java
+ bitimage.wire.Container
+bitimage/storage/exceptions/StorageObjectReferenceException.java
+ bitimage.storage.exceptions.StorageObjectReferenceException
+bitimage/domain/uploading/entities/ImageMetadata.java
+ bitimage.domain.uploading.entities.ImageMetadata
+bitimage/storage/adapters/dto/FileDTO.java
+ bitimage.storage.adapters.dto.FileDTO
+bitimage/deeplearning/adapters/classifiers/ImageClassifier.java
+ bitimage.deeplearning.adapters.classifiers.ImageClassifier
+bitimage/storage/pg/connection/ConnectionHandler.java
+ bitimage.storage.pg.connection.ConnectionHandler
+bitimage/domain/uploading/entities/FileUrl.java
+ bitimage.domain.uploading.entities.FileUrl
+bitimage/storage/pg/query/SQLExceptionTranslator.java
+ bitimage.storage.pg.query.SQLExceptionTranslator
+bitimage/transport/adapters/dto/ImageUploadUrlDTO.java
+ bitimage.transport.adapters.dto.ImageUploadUrlDTO
+bitimage/storage/aws/IFileSystem.java
+ bitimage.storage.aws.IFileSystem
+bitimage/domain/uploading/ports/IEventPublisher.java
+ bitimage.domain.uploading.ports.IEventPublisher
+bitimage/transport/errors/UnauthenticatedException.java
+ bitimage.transport.errors.UnauthenticatedException
+bitimage/domain/uploading/entities/Tag.java
+ bitimage.domain.uploading.entities.Tag
+bitimage/Application.java
+ bitimage.Application
+bitimage/transport/adapters/dto/LabelDTO.java
+ bitimage.transport.adapters.dto.LabelDTO
+bitimage/transport/adapters/dto/ImageDTO.java
+ bitimage.transport.adapters.dto.ImageDTO
+bitimage/storage/pg/connection/IPostgresEnv.java
+ bitimage.storage.pg.connection.IPostgresEnv
+bitimage/transport/controllers/UserController.java
+ bitimage.transport.controllers.UserController
+bitimage/domain/uploading/ports/IUserStore.java
+ bitimage.domain.uploading.ports.IUserStore
+bitimage/env/GlobalEnv.java
+ bitimage.env.GlobalEnv
+bitimage/storage/exceptions/IExceptionTranslator.java
+ bitimage.storage.exceptions.IExceptionTranslator
+bitimage/domain/sharedkernel/entities/Image.java
+ bitimage.domain.sharedkernel.entities.Image
+ bitimage.domain.sharedkernel.entities.Image$Builder
+bitimage/domain/uploading/entities/User.java
+ bitimage.domain.uploading.entities.User

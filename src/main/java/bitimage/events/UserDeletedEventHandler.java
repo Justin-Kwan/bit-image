@@ -1,14 +1,14 @@
 package bitimage.events;
 
-import bitimage.domain.uploading.services.ImageService;
+import bitimage.domain.uploading.services.ImageUploadService;
 import bitimage.events.mappers.EventHandlerMapper;
 
 public class UserDeletedEventHandler implements IEventHandler {
 
   private final EventHandlerMapper mapper;
-  private final ImageService service;
+  private final ImageUploadService service;
 
-  public UserDeletedEventHandler(EventHandlerMapper mapper, ImageService service) {
+  public UserDeletedEventHandler(EventHandlerMapper mapper, ImageUploadService service) {
     this.service = service;
     this.mapper = mapper;
   }

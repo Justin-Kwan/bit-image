@@ -11,8 +11,6 @@
 
 target/
 gradle/
-build/
 bin/
-build/
 
 src/main/resources/application.prod.properties

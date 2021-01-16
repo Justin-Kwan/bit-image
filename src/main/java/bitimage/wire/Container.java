@@ -6,7 +6,7 @@ import bitimage.deeplearning.aws.AwsImageClassifier;
 import bitimage.domain.analysis.services.ImageAnalysisService;
 import bitimage.domain.uploading.events.ImagesUploadedEvent;
 import bitimage.domain.uploading.events.UserDeletedEvent;
-import bitimage.domain.uploading.services.ImageService;
+import bitimage.domain.uploading.services.ImageUploadService;
 import bitimage.domain.uploading.services.UserService;
 import bitimage.env.EnvReader;
 import bitimage.env.GlobalEnv;
@@ -87,8 +87,8 @@ public class Container {
   }
 
   @Singleton
-  public ImageService provideImageService() {
-    return new ImageService(
+  public ImageUploadService provideImageUploadService() {
+    return new ImageUploadService(
         this.provideImageStore(), this.provideUserStore(), this.provideMessagePublisher());
   }
 
@@ -203,7 +203,7 @@ public class Container {
 
   public UserDeletedEventHandler provideUserDeletedEventHandler() {
     return new UserDeletedEventHandler(
-        this.provideEventHandlerMapper(), this.provideImageService());
+        this.provideEventHandlerMapper(), this.provideImageUploadService());
   }
 
   public EventHandlerMapper provideEventHandlerMapper() {

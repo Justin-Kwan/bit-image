@@ -3,7 +3,7 @@ package bitimage.transport.controllers;
 import bitimage.domain.sharedkernel.entities.Image;
 import bitimage.domain.uploading.commands.CreateImageCmd;
 import bitimage.domain.uploading.entities.FileUrl;
-import bitimage.domain.uploading.services.ImageService;
+import bitimage.domain.uploading.services.ImageUploadService;
 import bitimage.regex.RegexPatterns;
 import bitimage.transport.adapters.dto.ImageDTO;
 import bitimage.transport.adapters.dto.ImageUploadUrlsDTO;
@@ -35,12 +35,12 @@ import javax.validation.constraints.Size;
 @Controller(BaseEndpoints.IMAGES)
 public class ImageController extends BaseController {
 
-  private final ImageService imageService;
+  private final ImageUploadService imageService;
   private final ImageControllerMapper mapper;
 
   @Inject
   public ImageController(
-      ImageService imageService, ImageControllerMapper mapper, ITokenChecker tokenChecker) {
+      ImageUploadService imageService, ImageControllerMapper mapper, ITokenChecker tokenChecker) {
     super(tokenChecker);
 
     this.imageService = imageService;

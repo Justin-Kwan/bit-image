@@ -1,5 +1,4 @@
 *.class
-*.jar
 
 .DS_Store
 .settings

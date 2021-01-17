@@ -245,47 +245,47 @@ curl http://54.198.201.117/api/v1/images
 	-H "Content-type: application/json" \
 	-H 'Authorization: Bearer <token>' \
 	-d '
-		{
-			"images": [
-        		{
-            		"id": "7aed75b2-08af-4ce8-9be0-50934a75ac98",
-            		"name": "nicelettuce",
-           		 "hash": "37d0f0e9387ad830b29647eccd0d304e",
-            		"is_private": false,
-            		"tags": [
-                		{
-							"name": "leafy"
-						},
-                		{
-							"name": "green"
-						},
-                		{
-							"name": "notsotasty"
-						},
-                		{
-							"name": "salad"
-						}
-					]
-           	 },
-        		{
-					"id": "1ca382d2-44f9-4fa8-acff-ab950ace5473",
-            		"name": "coolcat",
-            		"hash": "b3929ff3a67c4ee53f4317a105a69042",
-            		"is_private": false,
-            		"tags": [
-            			{
-                    		"name": "coast"
-                		},
-               		 {
-                    		"name": "clearsky"
-                		},
-                		{
-                    		"name": "smallcat"
-                		 }
-            		]
-        		}
-    		]
-		}'
+{
+   "images":[
+      {
+         "id":"7aed75b2-08af-4ce8-9be0-50934a75ac98",
+         "name":"nicelettuce",
+         "hash":"37d0f0e9387ad830b29647eccd0d304e",
+         "is_private":false,
+         "tags":[
+            {
+               "name":"leafy"
+            },
+            {
+               "name":"green"
+            },
+            {
+               "name":"notsotasty"
+            },
+            {
+               "name":"salad"
+            }
+         ]
+      },
+      {
+         "id":"1ca382d2-44f9-4fa8-acff-ab950ace5473",
+         "name":"coolcat",
+         "hash":"b3929ff3a67c4ee53f4317a105a69042",
+         "is_private":false,
+         "tags":[
+            {
+               "name":"coast"
+            },
+            {
+               "name":"clearsky"
+            },
+            {
+               "name":"smallcat"
+            }
+         ]
+      }
+   ]
+}'
 ```
 
 Our list of images will be returned in a summarized format, with a generated view link for each one. We can click on these links to view our images! Note that these image view links will expire after 1 hour.

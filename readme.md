@@ -44,29 +44,31 @@ Bit-image is a fast and straight-forward service that allows you to upload, stor
 
 - [Using the API](#using-the-api)
 
-- [Generate Authorization Token](#generate-authorization-token)
+   - [Generate Authorization Token](#generate-authorization-token)
 
-- [Create a User Account](#create-a-user-account)
+      - [Create a User Account](#create-a-user-account)
 
-- [Upload Multiple Images](#upload-multiple-images)
+   - [Upload Multiple Images](#upload-multiple-images)
 
-	- [Get Upload URLs](#get-upload-urls)
+	   - [Get Upload URLs](#get-upload-urls)
 
-	- [Directly Upload Image Files](#directly-upload-image-files)
+	   - [Directly Upload Image Files](#directly-upload-image-files)
 
-	- [Notify Bit-image](#notify-bit-image)
+	   - [Notify Bit-image](#notify-bit-image)
 
-- [Get Image Summary List](#get-image-summary-list)
+   - [Get Image Summary List](#get-image-summary-list)
 
-	- [By Name, Tag or Content Label](#by-name,-tag,-or-content-label)
+	   - [By Name, Tag or Content Label](#by-name,-tag,-or-content-label)
 
-	- [Public Images](#public-images)
+	   - [Public Images](#public-images)
 
-- [Get Single Expanded Image](#get-single-expanded-image)
+   - [Get Single Expanded Image](#get-single-expanded-image)
 
-- [Delete Multiple Images](#delete-multiple-images)
+   - [Delete Multiple Images](#delete-multiple-images)
 
-- [Delete User Account](#delete-user-account)
+   - [Delete User Account](#delete-user-account)
+
+- [Tools and Frameworks Used](#tools-and-frameworks-used)
 
 
 ## Overview
@@ -653,3 +655,17 @@ curl 'http://54.198.201.117/api/v1/users/0e2d2c9a-b24a-47fd-b017-3fdc8156d057' \
 	-X DELETE
     -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI"
 ```
+
+## Tools and Frameworks Used
+
+- [Gradle 6.7.1](https://gradle.org/releases/)
+
+- [Micronaut](https://micronaut.io/download.html) for backend server
+
+- [PostgreSQL](https://www.postgresql.org/download/) for image metadata storage
+
+- [Beanstalkd](https://beanstalkd.github.io/) for long running job queuing
+
+- [AWS S3](https://aws.amazon.com/s3/) for image file storage
+
+- [AWS Rekognition](https://aws.amazon.com/rekognition/) for Object, Text, Face, Celebrity, and Unsafe content detection 

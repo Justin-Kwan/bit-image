@@ -143,9 +143,11 @@ I wrote a seperate service (CAS, Central Auth Service) a few years back and thou
 
 ### Upload and Storage
 
-Bit-image is designed with a non-blocking web server that handles requests quickly. When images are uploaded by clients, Bit-image pulls the images' metadata from AWS S3 into PostgreSQL storage.
+Bit-image is designed with a non-blocking web server that handles requests quickly. After images are uploaded by clients directly to AWS S3, Bit-image pulls the images' metadata from S3 into PostgreSQL storage.
 
-A job is then published into the Beanstalkd queue notifying the Analysis service (within a seperate bounded context). A seperate maintained thread pool handles reading messages off the queue and calling the Image Analysis service to process long running jobs (extracting content within images using AWS Rekognition, and storing them as content labels in PostgreSQL). This allows users to search their images by content.
+A job is then published into the Beanstalkd queue notifying the Analysis service (within a seperate bounded context).
+
+A seperate maintained thread pool handles reading messages off the queue and calling the Image Analysis service to process long running jobs (extracting content within images using AWS Rekognition, and storing them as content labels in PostgreSQL). This allows users to search their images by content.
 
 ![Image description](docs/architecture/imageservice.png)
 
@@ -155,7 +157,7 @@ A job is then published into the Beanstalkd queue notifying the Analysis service
 ### Java Server
 
 
-The Bit-image Java and Micronaut server is Dockerized and deployed on an AWS EC2 instance. Bit-image's EC2 instance can be attached to an autoscaling group to provide higher availability if and when the load and traffice requires it.
+The Bit-image Java and Micronaut server is Dockerized and deployed on an AWS EC2 instance. Bit-image's EC2 instance can be attached to an autoscaling group to provide higher availability if and when the load requires it.
 
 ![Image description](docs/deployment/ec2.png)
 
@@ -166,7 +168,7 @@ http://54.198.201.117/
 
 ### PostgreSQL
 
-Our Postgres database is managed by a single AWS RDS instance. This provides the convenience of any fully managed service, and the flexibility to scale and add read replicas to reduce load on our primary write instance if our load increases.
+The Postgres database is managed by a single AWS RDS instance. This provides the convenience of any fully managed service, and the flexibility to scale and add read replicas to reduce load on the primary write instance if traffic increases.
 
 ![Image description](docs/deployment/rds.png)
 
@@ -248,7 +250,7 @@ Example Error (409 Conflict, User Already Exists)
 
 #### Get upload URLs
 
-You (as the client) can request for multiple upload urls (pointing to an AWS S3 bucket) which we will then directly upload our images to. We should specify the number or upload urls that should be returned, which should match the number of images you wish to upload. You can ask Bit-image for up to 1000 upload urls at a time.
+You can request for multiple upload urls (pointing to an AWS S3 bucket) to directly upload images to. You should specify the number or upload urls to be returned, matching the number of images you wish to upload. You can ask Bit-image for up to 1000 upload urls at a time.
 
 Definition
 
@@ -291,7 +293,7 @@ Example Response
 
 #### Directly Upload Image Files
 
-You are able to directly upload your images to AWS S3. Only 5 images should be uploaded at a time to our provided image upload URLs. Bit-image should be notified after every 5 image uploads (to prevent blocking the web-server and potential memory usage bottlenecks).
+You are able to directly upload your images to AWS S3. Only 5 images should be uploaded at a time to the provided image upload URLs. Bit-image should be notified after every 5 image uploads (to prevent blocking the web-server and potential memory usage bottlenecks).
 
 This process can be easily automated with a client-side implementation.
 
@@ -300,7 +302,7 @@ Example Request (Upload Image File To URL)
 ![Image description](docs/api/uploadimages3.png)
 ![Image description](docs/api/uploadimages3body.png)
 
-*It is important to upload our file as a binary
+*It is important to upload your image file as a binary
 
 #### Notify Bit-image
 

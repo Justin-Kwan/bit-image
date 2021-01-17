@@ -19,7 +19,7 @@ public class LabelDAO {
     final String sql =
         """
       CREATE TABLE IF NOT EXISTS public.content_labels (
-				id UUID NOT NULL,
+        id UUID NOT NULL,
         name VARCHAR(250) NOT NULL,
         content_category VARCHAR(250) NOT NULL,
         CONSTRAINT pk_content_labels PRIMARY KEY(id),
@@ -43,12 +43,12 @@ public class LabelDAO {
         created_at TIMESTAMP WITHOUT TIME ZONE,
         updated_at TIMESTAMP WITHOUT TIME ZONE,
         CONSTRAINT pk_image_content_labels PRIMARY KEY(image_id, label_id),
-				CONSTRAINT fk_image_content_labels_to_images FOREIGN KEY(image_id)
-					REFERENCES public.images(id)
-					ON DELETE CASCADE,
-				CONSTRAINT fk_image_content_labels_to_content_labels FOREIGN KEY(label_id)
-					REFERENCES public.content_labels(id)
-					ON DELETE CASCADE
+        CONSTRAINT fk_image_content_labels_to_images FOREIGN KEY(image_id)
+          REFERENCES public.images(id)
+          ON DELETE CASCADE,
+        CONSTRAINT fk_image_content_labels_to_content_labels FOREIGN KEY(label_id)
+          REFERENCES public.content_labels(id)
+          ON DELETE CASCADE
       );
     """;
 
@@ -66,15 +66,15 @@ public class LabelDAO {
         DELETE FROM
           public.content_labels
         USING
-					public.content_labels cl
-					LEFT JOIN public.image_content_labels icl ON cl.id = icl.label_id
+          public.content_labels cl
+          LEFT JOIN public.image_content_labels icl ON cl.id = icl.label_id
         WHERE
-					content_labels.id = cl.id AND
-					icl.label_id IS NULL;
+          content_labels.id = cl.id AND
+          icl.label_id IS NULL;
 
-				RETURN NULL;
+        RETURN NULL;
       END;
-			$$
+      $$
 		""";
 
     this.queryExecutor.write(new SQLQuery(sql));

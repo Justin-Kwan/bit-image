@@ -16,7 +16,8 @@ public class LabelDAO {
   }
 
   public void createLabelsTable() throws Exception {
-    final String sql = """
+    final String sql =
+        """
       CREATE TABLE IF NOT EXISTS public.content_labels (
 				id UUID NOT NULL,
         name VARCHAR(250) NOT NULL,
@@ -33,7 +34,8 @@ public class LabelDAO {
   }
 
   public void createImageLabelLinkTable() throws Exception {
-    final String sql = """
+    final String sql =
+        """
       CREATE TABLE IF NOT EXISTS public.image_content_labels (
         image_id UUID NOT NULL,
         label_id UUID NOT NULL,
@@ -54,7 +56,8 @@ public class LabelDAO {
   }
 
   public void createFunctionToDeleteOrphanedLabels() throws Exception {
-    final String sql = """
+    final String sql =
+        """
       CREATE OR REPLACE FUNCTION delete_orhpaned_content_labels()
       RETURNS TRIGGER LANGUAGE PLPGSQL
 
@@ -88,7 +91,8 @@ public class LabelDAO {
    *     createFunctionToDeleteOrphanedTags().
    */
   public void createTriggerToDeleteOrphanedLabels() throws Exception {
-    final String sql = """
+    final String sql =
+        """
 		  DROP TRIGGER IF EXISTS delete_orphaned_content_labels_after_user_deleted
 		  	ON public.users;
 
@@ -119,7 +123,7 @@ public class LabelDAO {
       final List<Object> insertImageLabelLinkParams = this.getInsertImageLabelLinkParams(labelDTO);
 
       tx.send(new SQLQuery(insertLabelSQL, insertLabelParams))
-        .send(new SQLQuery(insertImageLabelLinkSQL, insertImageLabelLinkParams));
+          .send(new SQLQuery(insertImageLabelLinkSQL, insertImageLabelLinkParams));
     }
 
     this.queryExecutor.commit(tx);

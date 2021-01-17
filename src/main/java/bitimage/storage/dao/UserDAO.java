@@ -17,7 +17,8 @@ public class UserDAO {
   }
 
   public void createUsersTable() throws Exception {
-    final String sql = """
+    final String sql =
+        """
       CREATE TABLE IF NOT EXISTS public.users (
         id UUID NOT NULL,
         created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
@@ -34,7 +35,8 @@ public class UserDAO {
   }
 
   public void insertUser(UserDTO userDTO) throws Exception {
-    final String sql = """
+    final String sql =
+        """
       INSERT INTO public.users (
         id,
         created_at,
@@ -60,7 +62,8 @@ public class UserDAO {
   }
 
   public void deleteUserByID(UUID userID) throws Exception {
-    final String sql = """
+    final String sql =
+        """
       DELETE FROM
         public.users
       WHERE
@@ -73,7 +76,8 @@ public class UserDAO {
   }
 
   public boolean doesUserExist(UUID userID) throws Exception {
-    final String sql = """
+    final String sql =
+        """
       SELECT EXISTS(
         SELECT
           id

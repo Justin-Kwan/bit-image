@@ -25,7 +25,8 @@ public class ImageDAO {
    * performance, based on column usage in select clauses.
    */
   public void createImagesTable() throws Exception {
-    final String sql = """
+    final String sql =
+        """
 			CREATE TABLE IF NOT EXISTS public.images (
 				id UUID NOT NULL DEFAULT uuid_generate_v4(),
 				name VARCHAR(250) NOT NULL,
@@ -59,7 +60,8 @@ public class ImageDAO {
   }
 
   public void createTagsTable() throws Exception {
-    final String sql = """
+    final String sql =
+        """
 			CREATE TABLE IF NOT EXISTS public.tags (
 				id UUID NOT NULL,
 				name VARCHAR(250) NOT NULL,
@@ -78,7 +80,8 @@ public class ImageDAO {
    * single image id associated to a tag id.
    */
   public void createImageTagLinkTable() throws Exception {
-    final String sql = """
+    final String sql =
+        """
 			CREATE TABLE IF NOT EXISTS public.image_tags (
 				image_id UUID NOT NULL,
 				tag_id UUID NOT NULL,
@@ -104,7 +107,8 @@ public class ImageDAO {
    * @throws Exception
    */
   public void createFunctionToDeleteOrphanedTags() throws Exception {
-    final String sql = """
+    final String sql =
+        """
       CREATE OR REPLACE FUNCTION delete_orhpaned_tags()
       RETURNS TRIGGER LANGUAGE PLPGSQL
 
@@ -136,7 +140,8 @@ public class ImageDAO {
    *     createFunctionToDeleteOrphanedTags()
    */
   public void createTriggerToDeleteOrphanedTags() throws Exception {
-    final String sql = """
+    final String sql =
+        """
 			DROP TRIGGER IF EXISTS delete_orphaned_tags_after_user_deleted
 				ON public.users;
 
@@ -191,7 +196,7 @@ public class ImageDAO {
           this.getInsertImageTagLinkParams(imageID, tagDTO);
 
       tx.send(new SQLQuery(insertTagSQL, insertTagParams))
-        .send(new SQLQuery(insertImageTagLinkSQL, insertImageTagLinkParams));
+          .send(new SQLQuery(insertImageTagLinkSQL, insertImageTagLinkParams));
     }
   }
 
@@ -274,8 +279,9 @@ public class ImageDAO {
     final String sql = this.getSelectImageByIDSQL();
     final List<Object> params = Arrays.asList(userID, imageID);
 
-    final List<ImageDTO> results = this.queryExecutor.<ImageDTO>
-      read(new SQLQuery(sql, params), new ImageExpandedViewResultSetMapper());
+    final List<ImageDTO> results =
+        this.queryExecutor.<ImageDTO>read(
+            new SQLQuery(sql, params), new ImageExpandedViewResultSetMapper());
 
     if (results.isEmpty()) {
       return new ImageDTO().asNull();
@@ -344,8 +350,7 @@ public class ImageDAO {
 			LIMIT 100;
 		""";
 
-    return this.queryExecutor.<ImageDTO>
-      read(new SQLQuery(sql), new ImageResultSetMapper());
+    return this.queryExecutor.<ImageDTO>read(new SQLQuery(sql), new ImageResultSetMapper());
   }
 
   /**
@@ -353,7 +358,8 @@ public class ImageDAO {
    * ordered by the most recently updated (or created) images.
    */
   public List<ImageDTO> selectAllUserImages(UUID userID) throws Exception {
-    final String sql = """
+    final String sql =
+        """
 			SELECT
 				id,
 				name,
@@ -372,12 +378,12 @@ public class ImageDAO {
 
     final List<Object> params = Arrays.asList(userID);
 
-    return this.queryExecutor.<ImageDTO>
-      read(new SQLQuery(sql, params), new ImageResultSetMapper());
+    return this.queryExecutor.<ImageDTO>read(new SQLQuery(sql, params), new ImageResultSetMapper());
   }
 
   public List<ImageDTO> selectImagesByName(UUID userID, String imageName) throws Exception {
-    final String sql = """
+    final String sql =
+        """
 			SELECT
 				id,
 				name,
@@ -395,8 +401,7 @@ public class ImageDAO {
 
     final List<Object> params = Arrays.asList(userID, imageName + "%");
 
-    return this.queryExecutor.<ImageDTO>
-      read(new SQLQuery(sql, params), new ImageResultSetMapper());
+    return this.queryExecutor.<ImageDTO>read(new SQLQuery(sql, params), new ImageResultSetMapper());
   }
 
   /**
@@ -406,7 +411,8 @@ public class ImageDAO {
    * <p>Tag names are compared case-insensitively.
    */
   public List<ImageDTO> selectImagesByTag(UUID userID, String tagName) throws Exception {
-    final String sql = """
+    final String sql =
+        """
 			SELECT
 				DISTINCT i.id AS id,
 				i.name AS name,
@@ -426,12 +432,12 @@ public class ImageDAO {
 
     final List<Object> params = Arrays.asList(userID, tagName + "%");
 
-    return this.queryExecutor.<ImageDTO>
-      read(new SQLQuery(sql, params), new ImageResultSetMapper());
+    return this.queryExecutor.<ImageDTO>read(new SQLQuery(sql, params), new ImageResultSetMapper());
   }
 
   public List<ImageDTO> selectImagesByContentLabel(UUID userID, String labelName) throws Exception {
-    final String sql = """
+    final String sql =
+        """
 			SELECT
 				DISTINCT i.id AS id,
 				i.name AS name,
@@ -451,8 +457,7 @@ public class ImageDAO {
 
     final List<Object> params = Arrays.asList(userID, labelName + "%");
 
-    return this.queryExecutor.<ImageDTO>
-      read(new SQLQuery(sql, params), new ImageResultSetMapper());
+    return this.queryExecutor.<ImageDTO>read(new SQLQuery(sql, params), new ImageResultSetMapper());
   }
 
   /**
@@ -468,7 +473,8 @@ public class ImageDAO {
    */
   public void deleteImagesByID(UUID userID, List<UUID> imageIDs) throws Exception {
     final String imageIDsToDelete = this.uuidListToString(imageIDs);
-    final String sql = """
+    final String sql =
+        """
 			DO $$
 			BEGIN
 				DELETE FROM
@@ -482,7 +488,7 @@ public class ImageDAO {
 			END
 			$$;
 		"""
-        .formatted(userID.toString(), imageIDsToDelete);
+            .formatted(userID.toString(), imageIDsToDelete);
 
     this.queryExecutor.write(new SQLQuery(sql));
   }
@@ -494,9 +500,7 @@ public class ImageDAO {
    * list as an argument.
    */
   private String uuidListToString(List<UUID> ids) {
-    final List<String> uuidStrings = ids.stream()
-        .map(UUID::toString)
-        .collect(Collectors.toList());
+    final List<String> uuidStrings = ids.stream().map(UUID::toString).collect(Collectors.toList());
 
     return String.join(",", uuidStrings);
   }

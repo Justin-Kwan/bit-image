@@ -12,7 +12,7 @@
 
 This is my coding challenge submission for the Shopify Summer 2021 backend developer internship.
 
-Bit-image is a fast and straight-forward service that allows you to upload, store, and view your images online.
+Bit-image is a fast and distributed image repository that allows you to upload, store, and view your images online.
 
 ## Table of Contents
 
@@ -137,7 +137,7 @@ gradle run
 
 Bit-image is secured with token based authorization.
 
-I wrote a seperate service (CAS, Central Auth Service) a few years back and thought it'd be cool to integrate. CAS handles storing user state for sign-ups and logins as well as generating and validating tokens.
+I wrote a seperate micro-service (CAS, Central Auth Service) a few years back and thought it'd be cool to integrate. CAS handles storing user state for sign-ups and logins as well as generating and validating tokens.
 
 - https://github.com/Justin-Kwan/CAS
 

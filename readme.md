@@ -12,39 +12,56 @@
                                |___/      
 ```
 
+This is my submission for the Shopify Summer 2021 Backend developer internship coding challenge.
+
 Bit-image is a fast and straight-forward service that allows you to upload, store, and view your images online.
 
 ## Table of Contents
 
-
 ### Overview
 
-- What is Bit-image
+- Entity Relationship
 
-- Scope of functionality
+### Architecture
 
-### Description
+- Authorization
+
+- Upload and Storage
 
 ### Deployment
 
+- Java Server
+
+- PostgreSQL
+
+- Beanstalkd
+
 ### Using the API
 
-- Generate auth token (from Central Authorization Service)
+- Generate Authorization Token
 
-- Creating a user account
+- Create a User Account
 
-- Uploading multiple images
+- Upload Multiple Images
 
-- Viewing and searching for images
+	- Get Upload URLs
 
-- Searching for images by tag
+	- Directly Upload Image Files
 
-- Searching for images by content label
+	- Notify Bit-image
+
+- Get Image Summary List
+
+	- By Name, Tag or Content Label
+
+	- Public Images
+
+
 
 ```
 curl 'http://54.198.201.117/api/v1/images/private/summary?content_label=vegetable' \
 	-X GET \
-	-H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiIsImV4cCI6MTYxMDg4MzQxN30.ucletNeqkishrYx-O0u9IUIQN8kaKNUx8IPpCX_dT2s'
+	-H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI'
 ```
 
 - Searching for images by name
@@ -71,17 +88,22 @@ curl 'http://54.198.201.117/api/v1/images/private/summary?name=nicelettuce' \
 
 - From source build
 
-### Architecture
 
-- Authorization
+## Overview
 
-- Image uploading
+### Entity Relationship
 
-- Image Analysis
+- An user can have many images
 
-### Data Management
+- An image can have many tags
 
-- Schema model
+- A tag can be associated to many images (useful for searching images by tag)
+
+- An image can have many content labels
+
+- A content label can be associated to many images
+
+
 
 ## Installation
 
@@ -93,9 +115,10 @@ pip install foobar
 
 ## Deployment
 
-### Application Server
+### Java Server
 
-The Bit-image Java build server is Dockerized and deployed on an AWS EC2 instance. We can attach Bit-image's EC2 instance to an autoscaling group to provide higher availability if and when the load and traffice requires it.
+
+The Bit-image Java and Micronaut server is Dockerized and deployed on an AWS EC2 instance. We can attach Bit-image's EC2 instance to an autoscaling group to provide higher availability if and when the load and traffice requires it.
 
 // add image
 // add base url endpoint
@@ -116,10 +139,15 @@ The Beanstalkd message queue is deployed in a single Digital Ocean droplet.
 
 Let's see how to send some cURL HTTP requests to interact with the public and authorized API endpoints.
 
-#### Generate Authorization Token
+### Generate Authorization Token
 
-Authorization tokens must be obtained by calling CAS (Central Auth Service).
-(I wrote this a few years back and throught it'd be cool to integrate for this project)
+A token without expiry has been generated for your use.
+
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI
+```
+
+Authorization tokens can also be obtained by calling CAS.
 
 Example Request
 ```
@@ -131,14 +159,14 @@ curl 'http://198.199.78.73:5000/loginSubmit' \
 
 Example Response
 
-```
+```json
 {
    "status":202,
-   "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiIsImV4cCI6MTYxMDg4NjI2MH0.OPVIU06sP-2XrWU--JtKEBkShXFcuPis-4blsu8pXP8"
+   "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI"
 }
 ```
 
-#### Create A User Account
+### Create a User Account
 
 Now, that we are signed up and have our auth token, we need to create our user account with Bit-image service.
 
@@ -151,21 +179,21 @@ Example Request
 ```
 curl 'http://54.198.201.117/api/v1/users' \
 	-X POST \
-	-H 'Authorization: Bearer <token>'
+	-H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI'
 ```
 
 Example Response
-```
+
+```json
 {
     "id": "73578802-dfea-45cf-bb43-baffb93ad8bb",
     "image_upload_count": 0
 }
 ```
 
-
-
 Example Error (409 Conflict, User Already Exists)
-```
+
+```josn
 {
 	"error": "Conflict occurred, resource already exists",
 	"message": "User with provided id already exists",
@@ -173,21 +201,23 @@ Example Error (409 Conflict, User Already Exists)
 }
 ```
 
-#### Uploading Multiple Images
+### Upload Multiple Images
 
-##### Get upload URLs
+#### Get upload URLs
 
-Let's see how to batch upload multiple images. We (as the client) can request for multiple upload urls (pointing to an AWS S3 bucket) which we will then directly upload our images to. We should specify the number or upload urls that should be returned, which should match the number of images we wish to upload. We can ask Bit-image for up to 1000 upload urls at a time.
+We (as the client) can request for multiple upload urls (pointing to an AWS S3 bucket) which we will then directly upload our images to. We should specify the number or upload urls that should be returned, which should match the number of images we wish to upload. We can ask Bit-image for up to 1000 upload urls at a time.
 
 Example Request
+
 ```
 curl 'http://54.198.201.117/api/v1/images/upload_urls?image_count=2' \
 	-X GET \
-	-H 'Authorization: Bearer <token>'
+	-H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI'
 ```
 
 Example Response
-```
+
+```json
 {
     "image_upload_urls": [
         {
@@ -204,20 +234,13 @@ Example Response
 }
 ```
 
-##### Batch Upload Image Files To Provided URLs
+#### Directly Upload Image Files
 
-With our upload urls handy, let's now upload our image files directly to AWS S3. Only 5 images should be uploaded at a time to our provided image upload URLs. We will then notify the Bit-image after each 5 image uploads (to prevent blocking the web-server and potential memory usage bottlenecks).
+Let's now upload our image files directly to AWS S3. Only 5 images should be uploaded at a time to our provided image upload URLs. We will then notify the Bit-image after every 5 image uploads (to prevent blocking the web-server and potential memory usage bottlenecks).
 
 This process can be easily automated with a client-side implementation.
 
 Example Request (Upload Image File To URL)
-
-Definition
-```
-PUT <url>
-```
-
-Example Request
 
 ```
 // postman image
@@ -226,7 +249,7 @@ Example Request
 
 *It is important to upload our file as a binary
 
-##### Batch Notify Bit-image
+#### Notify Bit-image
 
 When notifying Bit-image that up to 5 images are uploaded, we should use a POST request, specifying the name and custom tags that we want to associate to each image. (We can search our images by these later).
 
@@ -235,15 +258,20 @@ We also need to specify the MD5 hash of our 5 images in the request body as well
 Here's an useful site to generate the MD5 hash of your image:
 - https://md5file.com/calculator
 
-Example Request (Notify Bit-image that up to 5 images are uploaded)
-
 Definition
+
+```
+POST http://54.198.201.117/api/v1/images
+```
+
+
+Example Request (Notify Bit-image that up to 5 images are uploaded)
 
 ```
 curl http://54.198.201.117/api/v1/images
 	-X POST
 	-H "Content-type: application/json" \
-	-H 'Authorization: Bearer <token>' \
+	-H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI' \
 	-d '
 {
    "images":[
@@ -291,7 +319,8 @@ curl http://54.198.201.117/api/v1/images
 Our list of images will be returned in a summarized format, with a generated view link for each one. We can click on these links to view our images! Note that these image view links will expire after 1 hour.
 
 Example Response
-```
+
+```json
 {
     "images": [
         {
@@ -312,18 +341,100 @@ Example Response
 }
 ```
 
-Example Error (4.. Conflict, Image size exceeds limit)
+Example Error (413 Request Entity Too LArge, Image size exceeds limit)
+```
+{
+	"error": "Resource size exceeds upload limit",
+	"message": "Image with id '6d5cabdd-fd1b-4ebb-bed0-d8f29bd46ab6' has size of 3 MB, which exceeds the max upload size of 2 MB",
+	"detail": "Ensure that the provided resource is within size limit"
+}
 ```
 
-```
-
-Example Error (4.. Conflict, Uploaded file not image format)
+Example Error (415 Unsupported Media Type, Incorrect image format)
 
 ```
-
+{
+	"error": "Resource media type is unsupported",
+	"message": "Uploaded image with id '030af0ae-15c0-46ea-a5ca-671c5b524cbe' is of 'pdf' format, which is not supported",
+	"detail": "Ensure that the provided resource media type is correct"
+}
 ```
 
-Viewing your private images
+
+### Get Image Summary List
+
+#### By Name, Tag or Content Label
+
+We can get a summarized list of our own images by fuzzy matching against a tag or image name which we provided, or by the contents of the actual image.
+
+Definition
+
+```
+GET http://54.198.201.117/api/v1/images/private/summary
+```
+
+Fields
+
+- name
+- tag
+- content_label
+
+If none are specified, then all of the user's images are returned.
+
+Example Request
+
+```
+curl 'http://54.198.201.117/api/v1/images/private/summary?name=nicelettuce' \
+	-X GET \
+	-H "Content-type: application/json" \
+	-H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI"
+```
+
+
+#### Public Images
+
+We can also get a list of the 100 newest public images created by other users.
+
+Definition
+
+```
+GET http://54.198.201.117/api/v1/images/public/summary
+```
+
+Example Request
+
+```
+curl 'http://54.198.201.117/api/v1/images/public/summary' \
+	-X GET \
+	-H "Content-type: application/json" \
+	-H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI"
+```
+
+Example Response
+
+```
+{
+    "images": [
+    	{
+        	"id": "1ca382d2-44f9-4fa8-acff-ab950ace5473",
+        	"name": "coolcat",
+        	"is_private": "false",
+        	"file_format": "jpeg",
+        	"view_url": "https://storeduserimages.s3.amazonaws.com/users/73578802-dfea-45cf-bb43-baffb93ad8bb/1ca382d2-44f9-4fa8-acff-ab950ace5473?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210117T122431Z&X-Amz-SignedHeaders=host&X-Amz-Expires=120&X-Amz-Credential=AKIA43EBGQEFS7TXCKWE%2F20210117%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=035106865804024b8ad49a12ca8f96fb987e40da0b7fd8ded0e33395bac3e601"
+    	}, 
+        {
+        	"id": "7aed75b2-08af-4ce8-9be0-50934a75ac98",
+        	"name": "nicelettuce",
+        	"is_private": "false",
+        	"file_format": "jpeg",
+        	"view_url": "https://storeduserimages.s3.amazonaws.com/users/73578802-dfea-45cf-bb43-baffb93ad8bb/7aed75b2-08af-4ce8-9be0-50934a75ac98?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210117T122431Z&X-Amz-SignedHeaders=host&X-Amz-Expires=120&X-Amz-Credential=AKIA43EBGQEFS7TXCKWE%2F20210117%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=48c5a05ac65b2084d30a41d1ab9e13efa9cde9fb60c22653533dcc79fe660955"
+    	}
+	]
+}
+```
+
+
+
 
 
 

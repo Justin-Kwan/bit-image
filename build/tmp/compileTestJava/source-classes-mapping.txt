@@ -1,2 +1,0 @@
-domain/image-processing/ImageBuilderTest.java
- ImageBuilderTest

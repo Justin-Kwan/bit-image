@@ -16,7 +16,7 @@ public class HttpExceptionHandler {
   public static HttpResponse<Object> handle(Exception e) {
     HttpExceptionHandler.doLogError(e);
 
-    if (e instanceof UnauthenticatedException) {
+    if (e instanceof UnauthorizedException) {
       return ErrorResponses.unauthorizedAccess(e.getMessage());
     }
     if (e instanceof ImageNotFoundException) {

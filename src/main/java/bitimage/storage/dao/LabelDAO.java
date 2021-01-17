@@ -16,63 +16,61 @@ public class LabelDAO {
   }
 
   public void createLabelsTable() throws Exception {
-    final String sql =
-        """
-            CREATE TABLE IF NOT EXISTS public.content_labels (
+    final String sql = """
+      CREATE TABLE IF NOT EXISTS public.content_labels (
 				id UUID NOT NULL,
-                name VARCHAR(250) NOT NULL,
-                content_category VARCHAR(250) NOT NULL,
-                CONSTRAINT pk_content_labels PRIMARY KEY(id),
-                CONSTRAINT uk_content_labels_name_content_category UNIQUE(name, content_category)
-            );
+        name VARCHAR(250) NOT NULL,
+        content_category VARCHAR(250) NOT NULL,
+        CONSTRAINT pk_content_labels PRIMARY KEY(id),
+        CONSTRAINT uk_content_labels_name_content_category UNIQUE(name, content_category)
+      );
 
-            CREATE INDEX IF NOT EXISTS ux_content_labels_name_content_category
-                ON public.content_labels(name, content_category);
-        """;
+      CREATE INDEX IF NOT EXISTS ux_content_labels_name_content_category
+        ON public.content_labels(name, content_category);
+    """;
 
     this.queryExecutor.write(new SQLQuery(sql));
   }
 
   public void createImageLabelLinkTable() throws Exception {
-    final String sql =
-        """
-            CREATE TABLE IF NOT EXISTS public.image_content_labels (
-                image_id UUID NOT NULL,
-                label_id UUID NOT NULL,
-                label_confidence_score DOUBLE PRECISION NOT NULL,
-                created_at TIMESTAMP WITHOUT TIME ZONE,
-                updated_at TIMESTAMP WITHOUT TIME ZONE,
-                CONSTRAINT pk_image_content_labels PRIMARY KEY(image_id, label_id),
+    final String sql = """
+      CREATE TABLE IF NOT EXISTS public.image_content_labels (
+        image_id UUID NOT NULL,
+        label_id UUID NOT NULL,
+        label_confidence_score DOUBLE PRECISION NOT NULL,
+        created_at TIMESTAMP WITHOUT TIME ZONE,
+        updated_at TIMESTAMP WITHOUT TIME ZONE,
+        CONSTRAINT pk_image_content_labels PRIMARY KEY(image_id, label_id),
 				CONSTRAINT fk_image_content_labels_to_images FOREIGN KEY(image_id)
 					REFERENCES public.images(id)
 					ON DELETE CASCADE,
 				CONSTRAINT fk_image_content_labels_to_content_labels FOREIGN KEY(label_id)
 					REFERENCES public.content_labels(id)
 					ON DELETE CASCADE
-            );
-        """;
+      );
+    """;
 
     this.queryExecutor.write(new SQLQuery(sql));
   }
 
   public void createFunctionToDeleteOrphanedLabels() throws Exception {
-    final String sql =
-        """
-            CREATE OR REPLACE FUNCTION delete_orhpaned_content_labels()
-            RETURNS TRIGGER LANGUAGE PLPGSQL
-            AS $$
-            BEGIN
-                DELETE FROM
-                    public.content_labels
-                USING
+    final String sql = """
+      CREATE OR REPLACE FUNCTION delete_orhpaned_content_labels()
+      RETURNS TRIGGER LANGUAGE PLPGSQL
+
+      AS $$
+      BEGIN
+        DELETE FROM
+          public.content_labels
+        USING
 					public.content_labels cl
 					LEFT JOIN public.image_content_labels icl ON cl.id = icl.label_id
-                WHERE
+        WHERE
 					content_labels.id = cl.id AND
 					icl.label_id IS NULL;
 
 				RETURN NULL;
-            END;
+      END;
 			$$
 		""";
 
@@ -90,24 +88,21 @@ public class LabelDAO {
    *     createFunctionToDeleteOrphanedTags().
    */
   public void createTriggerToDeleteOrphanedLabels() throws Exception {
-    final String sql =
-        """
-		    DROP TRIGGER IF EXISTS delete_orphaned_content_labels_after_user_deleted
-		    	ON public.users;
+    final String sql = """
+		  DROP TRIGGER IF EXISTS delete_orphaned_content_labels_after_user_deleted
+		  	ON public.users;
 
-		    DROP TRIGGER IF EXISTS delete_orphaned_content_labels_after_images_deleted
-		    	ON public.images;
+		  DROP TRIGGER IF EXISTS delete_orphaned_content_labels_after_images_deleted
+		  	ON public.images;
 
-		    CREATE TRIGGER delete_orphaned_content_labels_after_user_deleted
-            AFTER DELETE
-            	ON public.users
-            	EXECUTE PROCEDURE delete_orhpaned_content_labels();
+		  CREATE TRIGGER delete_orphaned_content_labels_after_user_deleted
+        AFTER DELETE ON public.users
+        EXECUTE PROCEDURE delete_orhpaned_content_labels();
 
-		    CREATE TRIGGER delete_orphaned_content_labels_after_images_deleted
-		    AFTER DELETE
-		    	ON public.images
-		    	EXECUTE PROCEDURE delete_orhpaned_content_labels();
-	    """;
+		  CREATE TRIGGER delete_orphaned_content_labels_after_images_deleted
+		    AFTER DELETE ON public.images
+		  	EXECUTE PROCEDURE delete_orhpaned_content_labels();
+	  """;
 
     this.queryExecutor.write(new SQLQuery(sql));
   }
@@ -124,7 +119,7 @@ public class LabelDAO {
       final List<Object> insertImageLabelLinkParams = this.getInsertImageLabelLinkParams(labelDTO);
 
       tx.send(new SQLQuery(insertLabelSQL, insertLabelParams))
-          .send(new SQLQuery(insertImageLabelLinkSQL, insertImageLabelLinkParams));
+        .send(new SQLQuery(insertImageLabelLinkSQL, insertImageLabelLinkParams));
     }
 
     this.queryExecutor.commit(tx);
@@ -132,14 +127,13 @@ public class LabelDAO {
 
   private String getInsertLabelSQL() {
     return """
-        INSERT INTO public.content_labels (
-            id,
-            name,
-            content_category
-        ) VALUES
-            (?, ?, ?)
-        ON CONFLICT
-            DO NOTHING;
+      INSERT INTO public.content_labels (
+        id,
+        name,
+        content_category
+      ) VALUES
+        (?, ?, ?)
+      ON CONFLICT DO NOTHING;
      """;
   }
 
@@ -149,22 +143,21 @@ public class LabelDAO {
 
   private String getInsertImageLabelLinkSQL() {
     return """
-        INSERT INTO public.image_content_labels (
-            image_id,
-            label_id,
-            label_confidence_score,
-            created_at,
-            updated_at
-        ) (
-            SELECT
-                ?, id, ?, ?, ?
-            FROM
-                public.content_labels
-            WHERE
-                name = ? AND
-                content_category = ?
-        ) ON CONFLICT
-            DO NOTHING;
+      INSERT INTO public.image_content_labels (
+        image_id,
+        label_id,
+        label_confidence_score,
+        created_at,
+          updated_at
+      ) (
+        SELECT
+          ?, id, ?, ?, ?
+        FROM
+          public.content_labels
+        WHERE
+          name = ? AND
+          content_category = ?
+      ) ON CONFLICT DO NOTHING;
     """;
   }
 

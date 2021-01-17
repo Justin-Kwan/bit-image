@@ -6,12 +6,15 @@ import com.dinstone.beanstalkc.Job;
 import com.dinstone.beanstalkc.JobConsumer;
 import com.dinstone.beanstalkc.JobProducer;
 
-public class BeanstalkMessageQueue {
+public class BeanstalkMessageQueue implements IMessageQueue {
 
   private final BeanstalkClientFactory clientFactory;
   private final String queueName;
 
   public final int RESERVE_JOB_TIMEOUT_MS = 1;
+  public final int PUBLISH_JOB_PRIORITY = 1;
+  public final int PUBLISH_JOB_DELAY = 0;
+  public final int PUBLISH_JOB_TTR = 5000;
 
   private BeanstalkMessageQueue(BeanstalkClientFactory clientFactory, String queueName) {
     this.clientFactory = clientFactory;
@@ -37,7 +40,13 @@ public class BeanstalkMessageQueue {
 
     try {
       producer = this.clientFactory.createJobProducer(tubeName);
-      producer.putJob(1, 0, 5000, message.toBytes()); // TODO: No magic numbers!
+
+      producer.putJob(
+          this.PUBLISH_JOB_PRIORITY,
+          this.PUBLISH_JOB_DELAY,
+          this.PUBLISH_JOB_TTR,
+          message.toBytes());
+
     } finally {
       if (producer != null) producer.close();
     }

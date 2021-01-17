@@ -9,6 +9,8 @@ import java.util.List;
 public interface IImageStore {
   public List<Image> addImages(List<Image> images) throws Exception;
 
+  public List<Image> getAllPublicImages() throws Exception;
+
   public List<Image> getAllUserImages(EntityID userID) throws Exception;
 
   public List<Image> getImagesByName(EntityID userID, String imageName) throws Exception;

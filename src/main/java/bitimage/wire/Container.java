@@ -17,6 +17,7 @@ import bitimage.events.mappers.EventHandlerMapper;
 import bitimage.messaging.adapters.connectors.MessagePublisher;
 import bitimage.messaging.adapters.connectors.MessageReader;
 import bitimage.messaging.beanstalk.BeanstalkMessageQueue;
+import bitimage.messaging.beanstalk.BeanstalkTubeNames;
 import bitimage.storage.adapters.datastores.ImageStore;
 import bitimage.storage.adapters.datastores.LabelStore;
 import bitimage.storage.adapters.datastores.UserStore;
@@ -33,11 +34,12 @@ import bitimage.transport.adapters.mappers.ImageControllerMapper;
 import bitimage.transport.adapters.mappers.UserControllerMapper;
 import bitimage.transport.middleware.RemoteTokenChecker;
 import io.micronaut.context.annotation.Factory;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.inject.Singleton;
 
 /** Class responsible for wiring up entire application object dependency graph. */
@@ -45,30 +47,15 @@ import javax.inject.Singleton;
 public class Container {
 
   private final GlobalEnv env;
-  // private final Logger logger;
+  private final Logger logger;
   private final ExecutorService workerPool;
 
   public Container() {
     this.env = new EnvReader().read();
-    System.out.println("\n\n" + Container.<GlobalEnv>printObject(this.env) + "\n\n");
-    // this.logger = Logger.getLogger("Container logger");
     this.workerPool = Executors.newCachedThreadPool();
-  }
+    this.logger = Logger.getLogger("Container logger");
 
-  public static <T> String printObject(T t) {
-    StringBuilder sb = new StringBuilder();
-
-    for (Field field : t.getClass().getDeclaredFields()) {
-      field.setAccessible(true);
-
-      try {
-        sb.append(field.getName()).append(": ").append(field.get(t)).append('\n');
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-
-    return sb.toString();
+    this.logger.log(Level.INFO, "Wiring up application components");
   }
 
   @Singleton
@@ -154,7 +141,7 @@ public class Container {
     try {
       daoFactory = DAOFactory.CreateNew(this.provideSQLQueryExecutor());
     } catch (Exception e) {
-      // this.logger.log(Level.SEVERE, e.getMessage(), e);
+      this.logger.log(Level.SEVERE, e.getMessage(), e);
       System.exit(-1);
     }
 
@@ -179,8 +166,9 @@ public class Container {
   public Map<String, String> provideEventToQueueLookup() {
     final var eventsToQueues = new HashMap<String, String>();
 
-    eventsToQueues.put(ImagesUploadedEvent.class.getSimpleName(), "images.analyze");
-    eventsToQueues.put(UserDeletedEvent.class.getSimpleName(), "users.delete");
+    eventsToQueues.put(
+        ImagesUploadedEvent.class.getSimpleName(), BeanstalkTubeNames.IMAGES_UPLOADED);
+    eventsToQueues.put(UserDeletedEvent.class.getSimpleName(), BeanstalkTubeNames.USER_DELETED);
 
     return eventsToQueues;
   }
@@ -189,9 +177,8 @@ public class Container {
     final var messageHandlers = new HashMap<String, IEventHandler>();
 
     messageHandlers.put(
-        "images.analyze", this.provideImagesUploadedEventHandler()); // TODO: define in config file
-    messageHandlers.put("images.delete", (String message) -> {});
-    messageHandlers.put("users.delete", this.provideUserDeletedEventHandler());
+        BeanstalkTubeNames.IMAGES_UPLOADED, this.provideImagesUploadedEventHandler());
+    messageHandlers.put(BeanstalkTubeNames.USER_DELETED, this.provideUserDeletedEventHandler());
 
     return messageHandlers;
   }

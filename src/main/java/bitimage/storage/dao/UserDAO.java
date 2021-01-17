@@ -17,35 +17,33 @@ public class UserDAO {
   }
 
   public void createUsersTable() throws Exception {
-    final String sql =
-        """
-            CREATE TABLE IF NOT EXISTS public.users (
-                id UUID NOT NULL,
-                created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
-                    DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
-                updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
-                    DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
-                image_upload_limit INTEGER,
-                image_upload_count INTEGER,
-                CONSTRAINT pk_users PRIMARY KEY(id)
-            );
-        """;
+    final String sql = """
+      CREATE TABLE IF NOT EXISTS public.users (
+        id UUID NOT NULL,
+        created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
+          DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+        updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
+          DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+        image_upload_limit INTEGER,
+        image_upload_count INTEGER,
+        CONSTRAINT pk_users PRIMARY KEY(id)
+      );
+    """;
 
     this.queryExecutor.write(new SQLQuery(sql));
   }
 
   public void insertUser(UserDTO userDTO) throws Exception {
-    final String sql =
-        """
-            INSERT INTO public.users (
-                id,
-                created_at,
-                updated_at,
-                image_upload_limit,
-                image_upload_count
-            ) VALUES
-                (?, ?, ?, ?, ?);
-        """;
+    final String sql = """
+      INSERT INTO public.users (
+        id,
+        created_at,
+        updated_at,
+        image_upload_limit,
+        image_upload_count
+      ) VALUES
+        (?, ?, ?, ?, ?);
+    """;
 
     final List<Object> params = this.getInsertUserParams(userDTO);
 
@@ -62,13 +60,12 @@ public class UserDAO {
   }
 
   public void deleteUserByID(UUID userID) throws Exception {
-    final String sql =
-        """
-            DELETE FROM
-                public.users
-            WHERE
-                id = ?;
-        """;
+    final String sql = """
+      DELETE FROM
+        public.users
+      WHERE
+        id = ?;
+    """;
 
     final List<Object> params = Arrays.asList(userID);
 
@@ -76,17 +73,16 @@ public class UserDAO {
   }
 
   public boolean doesUserExist(UUID userID) throws Exception {
-    final String sql =
-        """
-            SELECT EXISTS(
-                SELECT
-                    id
-                FROM
-                    users
-                WHERE
-                    id = ?
-            );
-        """;
+    final String sql = """
+      SELECT EXISTS(
+        SELECT
+          id
+        FROM
+          users
+        WHERE
+          id = ?
+      );
+    """;
 
     final List<Object> params = Arrays.asList(userID);
 

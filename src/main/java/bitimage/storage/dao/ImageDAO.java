@@ -20,52 +20,54 @@ public class ImageDAO {
     this.queryExecutor = queryExecutor;
   }
 
+  /**
+   * Creates table for storing image metadata, with multiple indexes to optomize for faster read
+   * performance, based on column usage in select clauses.
+   */
   public void createImagesTable() throws Exception {
-    final String sql =
-        """
+    final String sql = """
 			CREATE TABLE IF NOT EXISTS public.images (
-					id UUID NOT NULL DEFAULT uuid_generate_v4(),
-					name VARCHAR(250) NOT NULL,
-					user_id UUID NOT NULL,
-					hash_md5 UUID NOT NULL,
-					size_bytes BIGINT NOT NULL,
-					file_format VARCHAR(50) NOT NULL,
-					is_private BOOLEAN NOT NULL,
-					created_at TIMESTAMP NOT NULL,
-					updated_at TIMESTAMP NOT NULL,
-					CONSTRAINT pk_images PRIMARY KEY(id),
-					CONSTRAINT fk_images_to_users FOREIGN KEY(user_id)
-							REFERENCES public.users(id)
-							ON DELETE CASCADE
+				id UUID NOT NULL DEFAULT uuid_generate_v4(),
+				name VARCHAR(250) NOT NULL,
+				user_id UUID NOT NULL,
+				hash_md5 UUID NOT NULL,
+				size_bytes BIGINT NOT NULL,
+				file_format VARCHAR(50) NOT NULL,
+				is_private BOOLEAN NOT NULL,
+				created_at TIMESTAMP NOT NULL,
+				updated_at TIMESTAMP NOT NULL,
+				CONSTRAINT pk_images PRIMARY KEY(id),
+				CONSTRAINT fk_images_to_users FOREIGN KEY(user_id)
+					REFERENCES public.users(id)
+					ON DELETE CASCADE
 			);
 
 			CREATE INDEX IF NOT EXISTS ix_images_user_id
-					ON public.images(user_id);
+				ON public.images(user_id);
 
 			CREATE INDEX IF NOT EXISTS ix_images_user_id_id
-					ON public.images(user_id, id);
+				ON public.images(user_id, id);
 
 			CREATE INDEX IF NOT EXISTS ix_images_user_id_name
-					ON public.images(user_id, name);
+				ON public.images(user_id, name);
 
 			CREATE INDEX IF NOT EXISTS ix_images_updated_at
-					ON public.images(updated_at DESC);
+				ON public.images(updated_at DESC);
 		""";
 
     this.queryExecutor.write(new SQLQuery(sql));
   }
 
   public void createTagsTable() throws Exception {
-    final String sql =
-        """
+    final String sql = """
 			CREATE TABLE IF NOT EXISTS public.tags (
-					id UUID NOT NULL,
-					name VARCHAR(250) NOT NULL,
-					CONSTRAINT pk_tags PRIMARY KEY(id)
+				id UUID NOT NULL,
+				name VARCHAR(250) NOT NULL,
+				CONSTRAINT pk_tags PRIMARY KEY(id)
 			);
 
 			CREATE UNIQUE INDEX IF NOT EXISTS ux_tags_name
-					ON public.tags(name);
+				ON public.tags(name);
 		""";
 
     this.queryExecutor.write(new SQLQuery(sql));
@@ -76,44 +78,47 @@ public class ImageDAO {
    * single image id associated to a tag id.
    */
   public void createImageTagLinkTable() throws Exception {
-    final String sql =
-        """
+    final String sql = """
 			CREATE TABLE IF NOT EXISTS public.image_tags (
-					image_id UUID NOT NULL,
-					tag_id UUID NOT NULL,
-					created_at TIMESTAMP NOT NULL,
-					updated_at TIMESTAMP NOT NULL,
-					CONSTRAINT pk_image_tags PRIMARY KEY(image_id, tag_id),
-					CONSTRAINT fk_image_tags_to_images FOREIGN KEY(image_id)
-							REFERENCES public.images(id)
-							ON DELETE CASCADE,
-					CONSTRAINT fk_image_tags_to_tags FOREIGN KEY(tag_id)
-							REFERENCES public.tags(id)
-							ON DELETE CASCADE
+				image_id UUID NOT NULL,
+				tag_id UUID NOT NULL,
+				created_at TIMESTAMP NOT NULL,
+				updated_at TIMESTAMP NOT NULL,
+				CONSTRAINT pk_image_tags PRIMARY KEY(image_id, tag_id),
+				CONSTRAINT fk_image_tags_to_images FOREIGN KEY(image_id)
+					REFERENCES public.images(id)
+					ON DELETE CASCADE,
+				CONSTRAINT fk_image_tags_to_tags FOREIGN KEY(tag_id)
+						REFERENCES public.tags(id)
+						ON DELETE CASCADE
 			);
 		""";
 
     this.queryExecutor.write(new SQLQuery(sql));
   }
 
+  /**
+   * Creates a new function that will remove all tags that are not associated with an image (either
+   * because the image or user was deleted).
+   *
+   * @throws Exception
+   */
   public void createFunctionToDeleteOrphanedTags() throws Exception {
-    final String sql =
-        """
-          CREATE OR REPLACE FUNCTION delete_orhpaned_tags()
-          RETURNS TRIGGER LANGUAGE PLPGSQL
-          AS $$
-          BEGIN
-            DELETE FROM
-                public.tags
-            USING
-					public.tags t
-					LEFT JOIN public.image_tags it ON t.id = it.tag_id
-                WHERE
-					tags.id = t.id AND
-					it.tag_id IS NULL;
+    final String sql = """
+      CREATE OR REPLACE FUNCTION delete_orhpaned_tags()
+      RETURNS TRIGGER LANGUAGE PLPGSQL
 
-				RETURN NULL;
-            END;
+      AS $$
+      	BEGIN
+      	  DELETE FROM
+      	    public.tags USING public.tags t
+						LEFT JOIN public.image_tags it ON t.id = it.tag_id
+      	  WHERE
+						tags.id = t.id
+						AND it.tag_id IS NULL;
+
+					RETURN NULL;
+      	END;
 			$$
 		""";
 
@@ -131,23 +136,22 @@ public class ImageDAO {
    *     createFunctionToDeleteOrphanedTags()
    */
   public void createTriggerToDeleteOrphanedTags() throws Exception {
-    final String sql =
-        """
+    final String sql = """
 			DROP TRIGGER IF EXISTS delete_orphaned_tags_after_user_deleted
-					ON public.users;
+				ON public.users;
 
 			DROP TRIGGER IF EXISTS delete_orphaned_tags_after_images_deleted
-					ON public.images;
+				ON public.images;
 
 			CREATE TRIGGER delete_orphaned_tags_after_user_deleted
-          AFTER DELETE
-            	ON public.users
-            	EXECUTE PROCEDURE delete_orhpaned_tags();
+        AFTER DELETE
+          ON public.users
+          EXECUTE PROCEDURE delete_orhpaned_tags();
 
 			CREATE TRIGGER delete_orphaned_tags_after_images_deleted
 			AFTER DELETE
-					ON public.images
-					EXECUTE PROCEDURE delete_orhpaned_tags();
+				ON public.images
+				EXECUTE PROCEDURE delete_orhpaned_tags();
 		""";
 
     this.queryExecutor.write(new SQLQuery(sql));
@@ -187,7 +191,7 @@ public class ImageDAO {
           this.getInsertImageTagLinkParams(imageID, tagDTO);
 
       tx.send(new SQLQuery(insertTagSQL, insertTagParams))
-          .send(new SQLQuery(insertImageTagLinkSQL, insertImageTagLinkParams));
+        .send(new SQLQuery(insertImageTagLinkSQL, insertImageTagLinkParams));
     }
   }
 
@@ -204,8 +208,8 @@ public class ImageDAO {
 					created_at,
 					updated_at
 			) VALUES
-					(?, ?, ?, ?, ?::uuid, ?, ?, ?, ?);
-	""";
+				(?, ?, ?, ?, ?::uuid, ?, ?, ?, ?);
+	  """;
   }
 
   private final List<Object> getInsertImageParams(ImageDTO imageDTO) {
@@ -234,8 +238,7 @@ public class ImageDAO {
 				name
 			) VALUES
 				(?, ?)
-			ON CONFLICT
-				DO NOTHING;
+			ON CONFLICT DO NOTHING;
 		""";
   }
 
@@ -248,24 +251,37 @@ public class ImageDAO {
   private String getInsertImageTagLinkSQL() {
     return """
 			INSERT INTO public.image_tags (
-					image_id,
-					tag_id,
-					created_at,
-					updated_at
+				image_id,
+				tag_id,
+				created_at,
+				updated_at
 			) (
-					SELECT
-							?, id, ?, ?
-					FROM
-							public.tags
-					WHERE
-						name = ?
-			) ON CONFLICT
-					DO NOTHING;
+				SELECT
+					?, id, ?, ?
+				FROM
+					public.tags
+				WHERE
+					name = ?
+			) ON CONFLICT DO NOTHING;
 		""";
   }
 
   public List<Object> getInsertImageTagLinkParams(UUID imageID, TagDTO tagDTO) {
     return Arrays.asList(imageID, tagDTO.created_at, tagDTO.updated_at, tagDTO.name);
+  }
+
+  public ImageDTO selectImageByID(UUID userID, UUID imageID) throws Exception {
+    final String sql = this.getSelectImageByIDSQL();
+    final List<Object> params = Arrays.asList(userID, imageID);
+
+    final List<ImageDTO> results = this.queryExecutor.<ImageDTO>
+      read(new SQLQuery(sql, params), new ImageExpandedViewResultSetMapper());
+
+    if (results.isEmpty()) {
+      return new ImageDTO().asNull();
+    }
+
+    return results.get(0);
   }
 
   /**
@@ -275,53 +291,61 @@ public class ImageDAO {
    * <p>If an image has no tags, for the tags column, PostgreSQL returns [null], which is converted
    * to an empty json list.
    */
-  public ImageDTO selectImageByID(UUID userID, UUID imageID) throws Exception {
-    final String sql = this.getSelectImageByIDSQL();
-    final List<Object> params = Arrays.asList(userID, imageID);
-
-    final List<ImageDTO> results =
-        this.queryExecutor.<ImageDTO>read(
-            new SQLQuery(sql, params), new ImageExpandedViewResultSetMapper());
-
-    if (results.isEmpty()) {
-      return new ImageDTO().asNull();
-    }
-
-    return results.get(0);
-  }
-
   private String getSelectImageByIDSQL() {
     return """
-		SELECT
-				i.id AS id,
-				i.name AS name,
-				i.user_id AS user_id,
-				i.is_private AS is_private,
-				i.size_bytes AS size_bytes,
-				i.file_format AS file_format,
-				REPLACE(i.hash_md5::text, '-', '') AS hash_md5,
-				COALESCE( NULLIF(json_agg(DISTINCT t.*)::text, '[null]'), '[]' ) AS tags,
-				COALESCE( NULLIF(json_agg(DISTINCT cl.*)::text, '[null]'), '[]' ) AS content_labels
- 		FROM
-				public.images i
-				LEFT JOIN
-			 			public.image_tags it
-			 			ON i.id = it.image_id
-				LEFT JOIN
-			 			public.tags t
-			 			ON it.tag_id = t.id
-				LEFT JOIN
-			 			public.image_content_labels icl
-			 			ON i.id = icl.image_id
-				LEFT JOIN
-			 			public.content_labels cl
-			 			ON icl.label_id = cl.id
- 		WHERE
-				i.user_id = ?
-				AND i.id = ?
- 		GROUP BY
-				i.id;
+			SELECT
+  			i.id AS id,
+  			i.name AS name,
+  			i.user_id AS user_id,
+  			i.is_private AS is_private,
+  			i.size_bytes AS size_bytes,
+  			i.file_format AS file_format,
+  			REPLACE(i.hash_md5 :: text, '-', '') AS hash_md5,
+  			COALESCE(
+  			  NULLIF(json_agg(DISTINCT t.*) :: text, '[null]'),
+  			  '[]'
+  			) AS tags,
+  			COALESCE(
+  			  NULLIF(json_agg(DISTINCT cl.*) :: text, '[null]'),
+  			  '[]'
+  			) AS content_labels
+			FROM
+  			public.images i
+  			LEFT JOIN public.image_tags it ON i.id = it.image_id
+  			LEFT JOIN public.tags t ON it.tag_id = t.id
+  			LEFT JOIN public.image_content_labels icl ON i.id = icl.image_id
+  			LEFT JOIN public.content_labels cl ON icl.label_id = cl.id
+			WHERE
+			  i.user_id = ?
+			  AND i.id = ?
+			GROUP BY
+			  i.id;
 		""";
+  }
+
+  /** Selects all publicly available images, limiting by the 100 latest updated images. */
+  public List<ImageDTO> selectAllPublicImages() throws Exception {
+    final String sql =
+        """
+			SELECT
+				id,
+				name,
+				user_id,
+				is_private,
+				size_bytes,
+				file_format,
+				REPLACE(hash_md5 :: text, '-', '') AS hash_md5
+			FROM
+				public.images
+			WHERE
+				is_private = FALSE
+			ORDER BY
+				updated_at DESC
+			LIMIT 100;
+		""";
+
+    return this.queryExecutor.<ImageDTO>
+      read(new SQLQuery(sql), new ImageResultSetMapper());
   }
 
   /**
@@ -329,50 +353,50 @@ public class ImageDAO {
    * ordered by the most recently updated (or created) images.
    */
   public List<ImageDTO> selectAllUserImages(UUID userID) throws Exception {
-    final String sql =
-        """
-					SELECT
-						id,
-						name,
-						user_id,
-						is_private,
-						size_bytes,
-						file_format,
-						REPLACE(hash_md5::text, '-', '') AS hash_md5
-					FROM
-						public.images
-					WHERE
-						user_id = ?
-					ORDER BY
-						updated_at DESC;
-				""";
+    final String sql = """
+			SELECT
+				id,
+				name,
+				user_id,
+				is_private,
+				size_bytes,
+				file_format,
+				REPLACE(hash_md5 :: text, '-', '') AS hash_md5
+			FROM
+				public.images
+			WHERE
+				user_id = ?
+			ORDER BY
+				updated_at DESC;
+		""";
 
     final List<Object> params = Arrays.asList(userID);
 
-    return this.queryExecutor.<ImageDTO>read(new SQLQuery(sql, params), new ImageResultSetMapper());
+    return this.queryExecutor.<ImageDTO>
+      read(new SQLQuery(sql, params), new ImageResultSetMapper());
   }
 
   public List<ImageDTO> selectImagesByName(UUID userID, String imageName) throws Exception {
-    final String sql =
-        """
-					SELECT
-						id,
-						name,
-						user_id,
-						is_private,
-						size_bytes,
-						file_format,
-						REPLACE(hash_md5::text, '-', '') AS hash_md5
-					FROM
-						public.images
-					WHERE
-						user_id = ? AND
-						name ILIKE ?;
-				""";
+    final String sql = """
+			SELECT
+				id,
+				name,
+				user_id,
+				is_private,
+				size_bytes,
+				file_format,
+				REPLACE(hash_md5::text, '-', '') AS hash_md5
+			FROM
+				public.images
+			WHERE
+				user_id = ? AND
+				name ILIKE ?;
+		""";
 
     final List<Object> params = Arrays.asList(userID, imageName + "%");
 
-    return this.queryExecutor.<ImageDTO>read(new SQLQuery(sql, params), new ImageResultSetMapper());
+    return this.queryExecutor.<ImageDTO>
+      read(new SQLQuery(sql, params), new ImageResultSetMapper());
   }
 
   /**
@@ -382,55 +406,53 @@ public class ImageDAO {
    * <p>Tag names are compared case-insensitively.
    */
   public List<ImageDTO> selectImagesByTag(UUID userID, String tagName) throws Exception {
-    final String sql =
-        """
-					SELECT DISTINCT
-						i.id AS id,
-						i.name AS name,
-						i.user_id AS user_id,
-						i.is_private AS is_private,
-						i.size_bytes AS size_bytes,
-						i.file_format AS file_format,
-						REPLACE(i.hash_md5::text, '-', '') AS hash_md5
-					FROM
-						public.images i
-						INNER JOIN public.image_tags it ON i.id = it.image_id
-						INNER JOIN public.tags t ON it.tag_id = t.id
-					WHERE
-						i.user_id = ? AND
-						t.name ILIKE ?
-					GROUP BY
-						i.id;
-			  """;
+    final String sql = """
+			SELECT
+				DISTINCT i.id AS id,
+				i.name AS name,
+				i.user_id AS user_id,
+				i.is_private AS is_private,
+				i.size_bytes AS size_bytes,
+				i.file_format AS file_format,
+				REPLACE(i.hash_md5::text, '-', '') AS hash_md5
+			FROM
+				public.images i
+				INNER JOIN public.image_tags it ON i.id = it.image_id
+				INNER JOIN public.tags t ON it.tag_id = t.id
+			WHERE
+				i.user_id = ? AND
+				t.name ILIKE ?;
+		""";
 
     final List<Object> params = Arrays.asList(userID, tagName + "%");
 
-    return this.queryExecutor.<ImageDTO>read(new SQLQuery(sql, params), new ImageResultSetMapper());
+    return this.queryExecutor.<ImageDTO>
+      read(new SQLQuery(sql, params), new ImageResultSetMapper());
   }
 
   public List<ImageDTO> selectImagesByContentLabel(UUID userID, String labelName) throws Exception {
-    final String sql =
-        """
-					SELECT DISTINCT
-						i.id AS id,
-						i.name AS name,
-						i.user_id AS user_id,
-						i.is_private AS is_private,
-						i.size_bytes AS size_bytes,
-						i.file_format AS file_format,
-						REPLACE(i.hash_md5::text, '-', '') AS hash_md5
-					FROM
-						public.images i
-						INNER JOIN public.image_content_labels icl ON i.id = icl.image_id
-						INNER JOIN public.content_labels cl ON icl.label_id = cl.id
-					WHERE
-						i.user_id = ? AND
-						cl.name ILIKE ?;
-				""";
+    final String sql = """
+			SELECT
+				DISTINCT i.id AS id,
+				i.name AS name,
+				i.user_id AS user_id,
+				i.is_private AS is_private,
+				i.size_bytes AS size_bytes,
+				i.file_format AS file_format,
+				REPLACE(i.hash_md5 :: text, '-', '') AS hash_md5
+			FROM
+				public.images i
+				INNER JOIN public.image_content_labels icl ON i.id = icl.image_id
+				INNER JOIN public.content_labels cl ON icl.label_id = cl.id
+			WHERE
+				i.user_id = ?
+				AND cl.name ILIKE ?;
+		""";
 
     final List<Object> params = Arrays.asList(userID, labelName + "%");
 
-    return this.queryExecutor.<ImageDTO>read(new SQLQuery(sql, params), new ImageResultSetMapper());
+    return this.queryExecutor.<ImageDTO>
+      read(new SQLQuery(sql, params), new ImageResultSetMapper());
   }
 
   /**
@@ -446,22 +468,21 @@ public class ImageDAO {
    */
   public void deleteImagesByID(UUID userID, List<UUID> imageIDs) throws Exception {
     final String imageIDsToDelete = this.uuidListToString(imageIDs);
-    final String sql =
-        """
-					DO $$
-					BEGIN
-						DELETE FROM
-							public.images
-						WHERE
-							user_id = '%s' AND
-							id = ANY (string_to_array('%s', ',')::uuid[]);
-						IF NOT FOUND THEN
-      		  			raise exception 'No rows affected (Given bad id)';
-    					END IF;
-					END
-					$$;
-				"""
-            .formatted(userID.toString(), imageIDsToDelete);
+    final String sql = """
+			DO $$
+			BEGIN
+				DELETE FROM
+					public.images
+				WHERE
+					user_id = '%s' AND
+					id = ANY (string_to_array('%s', ',')::uuid[]);
+				IF NOT FOUND THEN
+        			raise exception 'No rows affected (Given bad id)';
+    		END IF;
+			END
+			$$;
+		"""
+        .formatted(userID.toString(), imageIDsToDelete);
 
     this.queryExecutor.write(new SQLQuery(sql));
   }
@@ -473,7 +494,9 @@ public class ImageDAO {
    * list as an argument.
    */
   private String uuidListToString(List<UUID> ids) {
-    final List<String> uuidStrings = ids.stream().map(UUID::toString).collect(Collectors.toList());
+    final List<String> uuidStrings = ids.stream()
+        .map(UUID::toString)
+        .collect(Collectors.toList());
 
     return String.join(",", uuidStrings);
   }

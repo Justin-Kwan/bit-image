@@ -24,7 +24,6 @@ public class GlobalEnv implements IPostgresEnv, IBeanstalkEnv, IAwsEnv, ITokenCh
   public int beanstalkConnectTimeout;
 
   public String remoteTokenCheckerHostPort;
-  public String remoteTokenCheckerRequestFormat;
   public String remoteTokenCheckerRequestMediaType;
 
   /** components can get injected Postgres configurations * */
@@ -85,10 +84,6 @@ public class GlobalEnv implements IPostgresEnv, IBeanstalkEnv, IAwsEnv, ITokenCh
   /** components can get injected Token cheker (CAS) configurations * */
   public String getRemoteTokenCheckerHostPort() {
     return this.remoteTokenCheckerHostPort;
-  }
-
-  public String getRemoteTokenCheckerRequestBody() {
-    return this.remoteTokenCheckerRequestFormat;
   }
 
   public String getRemoteTokenCheckerRequestMediaType() {

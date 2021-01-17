@@ -10,6 +10,8 @@ bitimage/transport/adapters/dto/ImagesDTO.java
  bitimage.transport.adapters.dto.ImagesDTO
 bitimage/storage/adapters/datastores/UserStore.java
  bitimage.storage.adapters.datastores.UserStore
+bitimage/messaging/beanstalk/IMessageQueue.java
+ bitimage.messaging.beanstalk.IMessageQueue
 bitimage/storage/adapters/dto/TagDTO.java
  bitimage.storage.adapters.dto.TagDTO
 bitimage/messaging/beanstalk/IBeanstalkEnv.java
@@ -105,6 +107,8 @@ bitimage/messaging/adapters/connectors/MessageReader.java
  bitimage.messaging.adapters.connectors.MessageReader
 bitimage/domain/uploading/exceptions/ImageFormatInvalidException.java
  bitimage.domain.uploading.exceptions.ImageFormatInvalidException
+bitimage/messaging/beanstalk/BeanstalkTubeNames.java
+ bitimage.messaging.beanstalk.BeanstalkTubeNames
 bitimage/storage/pg/resultset/ImageExpandedViewResultSetMapper.java
  bitimage.storage.pg.resultset.ImageExpandedViewResultSetMapper
  bitimage.storage.pg.resultset.ImageExpandedViewResultSetMapper$1
@@ -161,6 +165,8 @@ bitimage/storage/pg/resultset/ResultSetMapper.java
  bitimage.storage.pg.resultset.ResultSetMapper
 bitimage/domain/common/events/IDomainEvent.java
  bitimage.domain.common.events.IDomainEvent
+bitimage/transport/errors/UnauthorizedException.java
+ bitimage.transport.errors.UnauthorizedException
 bitimage/domain/uploading/commands/CreateImageCmd.java
  bitimage.domain.uploading.commands.CreateImageCmd
 bitimage/domain/uploading/events/ImagesUploadedEvent.java
@@ -191,8 +197,6 @@ bitimage/storage/aws/IFileSystem.java
  bitimage.storage.aws.IFileSystem
 bitimage/domain/uploading/ports/IEventPublisher.java
  bitimage.domain.uploading.ports.IEventPublisher
-bitimage/transport/errors/UnauthenticatedException.java
- bitimage.transport.errors.UnauthenticatedException
 bitimage/domain/uploading/entities/Tag.java
  bitimage.domain.uploading.entities.Tag
 bitimage/Application.java

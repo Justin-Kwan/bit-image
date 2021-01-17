@@ -18,7 +18,7 @@ public class CleanImageLabels implements IFilter<List<Label>, List<Label>> {
 
   private Label cleanLabelName(Label label) {
     final String cleanedName =
-        label.getName().toLowerCase().replaceAll(RegexPatterns.NON_ALPHA_NUMERIC, "");
+        label.getName().toLowerCase().replaceAll(RegexPatterns.ALPHA_NUMERIC_SPACE, "");
 
     label.setName(cleanedName);
 

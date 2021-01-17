@@ -79,17 +79,15 @@ public class S3FileSystem implements IFileSystem {
    */
   public void moveFilesToFolder(List<FileDTO> fileDTOs, String srcFolderName, String destFolderName)
       throws Exception {
-    fileDTOs.parallelStream()
-        .forEach(
-            fileDTO -> {
-              try {
-                this.moveFileToFolder(fileDTO, srcFolderName, destFolderName);
-              } catch (RuntimeException e) {
-                throw e;
-              } catch (Exception e) {
-                throw new RuntimeException(e);
-              }
-            });
+    fileDTOs.parallelStream().forEach(fileDTO -> {
+      try {
+        this.moveFileToFolder(fileDTO, srcFolderName, destFolderName);
+      } catch (RuntimeException e) {
+        throw e;
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   /**

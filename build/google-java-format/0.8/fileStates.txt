@@ -14,7 +14,7 @@ src/main/java/bitimage/domain/analysis/ports/ILabelStore.java,161078343093844220
 src/main/java/bitimage/domain/sharedkernel/entities/Image.java,1610783402900402040,2589,FORMATTED
 src/main/java/bitimage/transport/adapters/dto/ImagesDTO.java,1610782676156509100,534,FORMATTED
 src/main/java/bitimage/domain/analysis/entities/ExtractImageLabels.java,1610783441261804954,896,FORMATTED
-src/main/java/bitimage/transport/errors/UnauthenticatedException.java,1610782355362853091,183,FORMATTED
+src/main/java/bitimage/transport/errors/UnauthorizedException.java,1610782355362853091,183,FORMATTED
 src/main/java/bitimage/deeplearning/adapters/mappers/ImageClassifierMapper.java,1610783490305057642,5467,UNFORMATTED
 src/main/java/bitimage/transport/errors/ErrorResponses.java,1610783880390078905,3307,INVALID
 src/main/java/bitimage/domain/uploading/events/UserDeletedEvent.java,1610783346815541346,548,FORMATTED

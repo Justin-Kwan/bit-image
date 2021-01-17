@@ -71,9 +71,18 @@ public class ImageStore implements IImageStore {
     return images;
   }
 
+  public List<Image> getAllPublicImages() throws Exception {
+    final ImageDAO imageDAO = this.daoFactory.getImageDAO();
+    final List<ImageDTO> imageDTOs = imageDAO.selectAllPublicImages();
+
+    final List<Image> images = this.mapper.mapToImages(imageDTOs);
+    images.parallelStream().forEach(this::hydrateWithViewUrl);
+
+    return images;
+  }
+
   public List<Image> getAllUserImages(EntityID userID) throws Exception {
     final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-
     final List<ImageDTO> imageDTOs = imageDAO.selectAllUserImages(userID.toUUID());
 
     final List<Image> images = this.mapper.mapToImages(imageDTOs);
@@ -90,7 +99,6 @@ public class ImageStore implements IImageStore {
    */
   public List<Image> getImagesByName(EntityID userID, String imageName) throws Exception {
     final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-
     final List<ImageDTO> imageDTOs = imageDAO.selectImagesByName(userID.toUUID(), imageName);
 
     final List<Image> images = this.mapper.mapToImages(imageDTOs);
@@ -101,7 +109,6 @@ public class ImageStore implements IImageStore {
 
   public List<Image> getImagesByTag(EntityID userID, String tagName) throws Exception {
     final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-
     final List<ImageDTO> imageDTOs = imageDAO.selectImagesByTag(userID.toUUID(), tagName);
 
     final List<Image> images = this.mapper.mapToImages(imageDTOs);
@@ -124,7 +131,6 @@ public class ImageStore implements IImageStore {
 
   public Image getImageByID(EntityID userID, EntityID imageID) throws Exception {
     final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-
     final ImageDTO imageDTO = imageDAO.selectImageByID(userID.toUUID(), imageID.toUUID());
 
     if (imageDTO.isNull()) {
@@ -162,10 +168,9 @@ public class ImageStore implements IImageStore {
     final ImageDAO imageDAO = this.daoFactory.getImageDAO();
     imageDAO.deleteImagesByUserID(userID.toUUID());
 
+    final String filePrefix = "users/%s/".formatted(userID.toString());
     final List<String> fileIDsToDelete =
-        this.fileSystem.lookupFileIDsByPrefix(
-            "users/" + userID.toString() + "/", // TODO: Refactor, move to config
-            AwsConstants.PERMANENT_STORAGE_FOLDER);
+        this.fileSystem.lookupFileIDsByPrefix(filePrefix, AwsConstants.PERMANENT_STORAGE_FOLDER);
 
     this.fileSystem.deleteFilesFromFolder(fileIDsToDelete, AwsConstants.PERMANENT_STORAGE_FOLDER);
   }

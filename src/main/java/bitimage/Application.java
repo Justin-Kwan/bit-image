@@ -14,11 +14,13 @@ public class Application {
 
     container
         .provideWorkerPool()
-        .submit(
-            () -> {
-              container.provideMessageReader().readMessages();
-            });
+        .submit(() -> {
+          container.provideMessageReader().readMessages();
+        });
 
-    Micronaut.build(args).mainClass(Application.class).start();
+    Micronaut
+        .build(args)
+        .mainClass(Application.class)
+        .start();
   }
 }

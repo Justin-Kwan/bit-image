@@ -119,6 +119,12 @@ public class ImageUploadService {
     return images;
   }
 
+  public List<Image> getAllPublicImages() throws Exception {
+    final List<Image> images = this.imageStore.getAllPublicImages();
+
+    return images;
+  }
+
   public List<Image> searchImagesByName(String providedUserID, String imageName) throws Exception {
     final var userID = EntityID.CreateNew(providedUserID);
     final List<Image> images = this.imageStore.getImagesByName(userID, imageName);

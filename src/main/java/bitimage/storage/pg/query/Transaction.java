@@ -3,6 +3,7 @@ package bitimage.storage.pg.query;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Encapsulates sql transaction queries. */
 public class Transaction {
 
   private List<SQLQuery> queries;

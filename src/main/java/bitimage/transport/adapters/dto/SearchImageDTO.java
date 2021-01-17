@@ -6,7 +6,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class SearchImageDTO {
-
   public Optional<
           @Size(min = 1, max = 200, message = "Image name must be between 1 and 200 characters")
           @Pattern(

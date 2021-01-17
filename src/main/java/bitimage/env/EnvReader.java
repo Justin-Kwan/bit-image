@@ -42,7 +42,6 @@ public class EnvReader {
     env.beanstalkConnectTimeout = Integer.parseInt(props.getProperty("beanstalk.timeout.connect"));
 
     env.remoteTokenCheckerHostPort = props.getProperty("cas.hostport");
-    env.remoteTokenCheckerRequestFormat = props.getProperty("cas.tokenrequest.format");
     env.remoteTokenCheckerRequestMediaType = props.getProperty("cas.tokenrequest.mediatype");
 
     return env;

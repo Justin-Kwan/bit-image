@@ -30,27 +30,25 @@ public class UserController extends BaseController {
   @Post()
   public HttpResponse<Object> createUser(HttpHeaders headers) {
 
-    return super.handleRequest(
-        () -> {
-          final String user_id = super.tokenChecker.doAuthCheck(headers);
+    return super.handleRequest(() -> {
+      final String user_id = super.tokenChecker.doAuthCheck(headers);
 
-          final User user = this.userService.createUser(user_id);
-          final UserDTO userDTO = this.mapper.mapToUserDTO(user);
+      final User user = this.userService.createUser(user_id);
+      final UserDTO userDTO = this.mapper.mapToUserDTO(user);
 
-          return HttpResponse.created(userDTO);
-        });
+      return HttpResponse.created(userDTO);
+    });
   }
 
   @Delete()
   public HttpResponse<Object> deleteUser(HttpHeaders headers) {
 
-    return super.handleRequest(
-        () -> {
-          final String user_id = super.tokenChecker.doAuthCheck(headers);
+    return super.handleRequest(() -> {
+      final String user_id = super.tokenChecker.doAuthCheck(headers);
 
-          this.userService.deleteUser(user_id);
+      this.userService.deleteUser(user_id);
 
-          return HttpResponse.noContent();
-        });
+      return HttpResponse.noContent();
+    });
   }
 }

@@ -2,21 +2,25 @@ package bitimage.messaging.adapters.connectors;
 
 import bitimage.domain.common.events.IDomainEvent;
 import bitimage.domain.uploading.ports.IEventPublisher;
-import bitimage.messaging.beanstalk.BeanstalkMessageQueue;
+import bitimage.messaging.beanstalk.IMessageQueue;
 import bitimage.messaging.beanstalk.QueueMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MessagePublisher implements IEventPublisher {
 
-  private final BeanstalkMessageQueue queue;
+  private final IMessageQueue queue;
   private final Map<String, String> eventToQueueLookup;
+  private final Logger logger;
 
-  public MessagePublisher(BeanstalkMessageQueue queue, Map<String, String> eventToQueueLookup) {
+  public MessagePublisher(IMessageQueue queue, Map<String, String> eventToQueueLookup) {
     this.queue = queue;
     this.eventToQueueLookup = eventToQueueLookup;
+    this.logger = Logger.getLogger("Message publisher logger");
   }
 
   /**
@@ -32,14 +36,11 @@ public class MessagePublisher implements IEventPublisher {
     final QueueMessage message = QueueMessage.CreateNew(messageStr);
 
     final String eventName = event.getClass().getSimpleName();
-    final String queueName = this.eventToQueueLookup.get(eventName);
+    final String channelName = this.eventToQueueLookup.get(eventName);
 
-    System.out.println(
-        "Publishing to queue name: :::::: " + queueName + " with event name ::: " + eventName);
+    CompletableFuture.runAsync(() -> this.queue.publish(message, channelName));
 
-    CompletableFuture.runAsync(() -> this.queue.publish(message, queueName));
-
-    final String logMessage = "Message published '%s'".formatted(messageStr);
-    System.out.println(logMessage);
+    final String logMessage = "Message published queue channel '%s'".formatted(channelName);
+    this.logger.log(Level.INFO, logMessage);
   }
 }

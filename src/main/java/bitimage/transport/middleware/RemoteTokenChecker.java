@@ -1,7 +1,7 @@
 package bitimage.transport.middleware;
 
 import bitimage.regex.RegexPatterns;
-import bitimage.transport.errors.UnauthenticatedException;
+import bitimage.transport.errors.UnauthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.http.HttpHeaders;
 import java.io.IOException;
@@ -12,16 +12,15 @@ import okhttp3.RequestBody;
 
 public class RemoteTokenChecker implements ITokenChecker<HttpHeaders> {
 
+  private static final String REQUEST_TOKEN_BODY = "{ \"token\": \"%s\" }";
   private static final String RESPONSE_USER_ID = "user_id";
   private static final String RESPONSE_IS_USER_AUTHORIZED = "is_user_authorized";
 
-  private final String tokenRequestJson;
   private final String remoteApiHostPort;
   private final String remoteApiMediaType;
 
   public RemoteTokenChecker(ITokenCheckerEnv env) {
     this.remoteApiHostPort = env.getRemoteTokenCheckerHostPort();
-    this.tokenRequestJson = env.getRemoteTokenCheckerRequestBody();
     this.remoteApiMediaType = env.getRemoteTokenCheckerRequestMediaType();
   }
 
@@ -34,7 +33,7 @@ public class RemoteTokenChecker implements ITokenChecker<HttpHeaders> {
     final String tokenCheckResponse = this.fetchAuthCheck(tokenCheckRequest);
 
     if (!this.isUserAuthorized(tokenCheckResponse)) {
-      throw new UnauthenticatedException();
+      throw new UnauthorizedException();
     }
 
     return this.getTokenUserID(tokenCheckResponse);
@@ -42,7 +41,7 @@ public class RemoteTokenChecker implements ITokenChecker<HttpHeaders> {
 
   private void assertHeadersContainToken(HttpHeaders headers) {
     if (!headers.contains(HttpHeaders.AUTHORIZATION)) {
-      throw new UnauthenticatedException();
+      throw new UnauthorizedException();
     }
   }
 
@@ -53,7 +52,7 @@ public class RemoteTokenChecker implements ITokenChecker<HttpHeaders> {
     final var cleanedAuthToken = authToken.split(RegexPatterns.SPACE)[1];
 
     final RequestBody tokenCheckRequest =
-        RequestBody.create(requestMediaType, tokenRequestJson.formatted(cleanedAuthToken));
+        RequestBody.create(requestMediaType, REQUEST_TOKEN_BODY.formatted(cleanedAuthToken));
 
     return tokenCheckRequest;
   }

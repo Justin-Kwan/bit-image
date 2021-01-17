@@ -2,8 +2,8 @@ package bitimage.regex;
 
 public final class RegexPatterns {
   public static final String SPACE = "\\s+";
-  public static final String NON_ALPHA_NUMERIC = "[^a-zA-Z0-9 -]"; // TODO: why two?
   public static final String ALPHA_NUMERIC = "^[A-Za-z0-9]+$";
+  public static final String ALPHA_NUMERIC_SPACE = "[^a-zA-Z0-9 -]";
   public static final String BOOLEAN = "^true$|^false$";
   public static final String HASH_MD5 = "^[a-f0-9]{32}$";
   public static final String UUID =

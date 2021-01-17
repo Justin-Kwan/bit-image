@@ -134,7 +134,7 @@ Example Response
 ```
 {
    "status":202,
-	"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiIsImV4cCI6MTYxMDg4NjI2MH0.OPVIU06sP-2XrWU--JtKEBkShXFcuPis-4blsu8pXP8"
+   "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiIsImV4cCI6MTYxMDg4NjI2MH0.OPVIU06sP-2XrWU--JtKEBkShXFcuPis-4blsu8pXP8"
 }
 ```
 
@@ -224,7 +224,7 @@ Example Request
 // postman body
 ```
 
-*It is important to upload our file in binary format
+*It is important to upload our file as a binary
 
 ##### Batch Notify Bit-image
 

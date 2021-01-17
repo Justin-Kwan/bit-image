@@ -20,6 +20,8 @@ Bit-image is a fast and distributed image repository that allows you to upload, 
 
     - [Entity Relationship](#entity-relationship)
 
+    - [Supported Image Formats](#supported-image-formats)
+
 - [Running Locally](#running-locally)
 
     - [Docker](#docker)
@@ -85,6 +87,22 @@ Bit-image is a fast and distributed image repository that allows you to upload, 
 - An image can have many content labels
 
 - A content label can be associated to many images
+
+### Supported Image Formats
+
+Supported Image formats include
+
+- PNG
+- GIF
+- BMP
+- JPG
+- JPEG
+- TIFF
+- WEBP
+- SVG+XML
+- VND.MICROSOFT.ICON
+
+All images being uploaded cannot exceed 2MB in size.
 
 
 ## Running Locally

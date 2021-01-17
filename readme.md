@@ -658,7 +658,7 @@ curl 'http://54.198.201.117/api/v1/users/0e2d2c9a-b24a-47fd-b017-3fdc8156d057' \
 
 ## Tools and Frameworks Used
 
-- [Gradle 6.7.1](https://gradle.org/releases/)
+- [Gradle 6.7.1](https://gradle.org/releases/) for Java build automation
 
 - [Micronaut](https://micronaut.io/download.html) for backend server
 

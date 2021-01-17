@@ -139,6 +139,8 @@ Bit-image is secured with token based authorization.
 
 I wrote a seperate micro-service (CAS, Central Auth Service) a few years back and thought it'd be cool to integrate. CAS handles storing user state for sign-ups and logins as well as generating and validating tokens.
 
+In production, HTTPS is much more secure, and should be strongly considered over HTTP when sending tokens and credentials.
+
 - https://github.com/Justin-Kwan/CAS
 
 ![Image description](docs/architecture/authorization.png)
@@ -655,6 +657,13 @@ curl 'http://54.198.201.117/api/v1/users/0e2d2c9a-b24a-47fd-b017-3fdc8156d057' \
 	-X DELETE
     -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI"
 ```
+
+### TODO
+
+- [ ] Migrate to use HTTPS for all endpoints
+- [ ] Implement pagination for serving image results
+- [ ] Build CLI Client interface
+- [ ] Enforce transactional rollbacks between AWS S3 and PostgreSQL (to enforce data integrity)
 
 ## Tools and Frameworks Used
 

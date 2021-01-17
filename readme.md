@@ -134,20 +134,25 @@ gradle run
 
 The Bit-image Java and Micronaut server is Dockerized and deployed on an AWS EC2 instance. We can attach Bit-image's EC2 instance to an autoscaling group to provide higher availability if and when the load and traffice requires it.
 
-// add image
-// add base url endpoint
+![Image description](docs/deployment/ec2.png)
+
+The instance host is
+```
+http://54.198.201.117/
+```
 
 ### PostgreSQL
 
 Our Postgres database is managed by a single AWS RDS instance. This provides the convenience of any fully managed service, and the flexibility to scale and add read replicas to reduce load on our primary write instance if our load increases.
 
-// add image
+![Image description](docs/deployment/rds.png)
 
 ### Beanstalkd
 
 The Beanstalkd message queue is deployed in a single Digital Ocean droplet.
 
-// add admin image
+![Image description](docs/deployment/beanstalkserver.png)
+![Image description](docs/deployment/beanstalktubes.png)
 
 ## Using the API
 
@@ -269,8 +274,8 @@ This process can be easily automated with a client-side implementation.
 Example Request (Upload Image File To URL)
 
 ```
-// postman image
-// postman body
+![Image description](docs/api/uploadimages3.png)
+![Image description](docs/api/uploadimages3body.png)
 ```
 
 *It is important to upload our file as a binary

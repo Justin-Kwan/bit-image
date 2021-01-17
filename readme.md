@@ -18,43 +18,45 @@ Bit-image is a fast and straight-forward service that allows you to upload, stor
 
 ## Table of Contents
 
-### Overview
+- [Overview](#Overview)
 
-- Entity Relationship
+    - [Entity Relationship](#entity-relationship)
 
-### Running Locally
+- [Running Locally](#running-locally)
 
-- Docker
+    - [Docker](#docker)
 
-- Source
+    - [Source](#source)
 
-### Architecture
+    - [Prerequisites](#prerequisites)
 
-- Authorization
+- [Architecture](#Architecture)
 
-- Upload and Storage
+    - [Authorization](#authorization)
 
-### Deployment
+    - [Upload and Storage](#upload-and-storage)
 
-- Java Server
+- [Deployment](#Deployment)
 
-- PostgreSQL
+    - [Java Server](#java-server)
 
-- Beanstalkd
+    - [PostgreSQL](#postgresql)
 
-### Using the API
+    - [Beanstalkd](#beanstalkd)
 
-- Generate Authorization Token
+- [Using the API](#using-the-api)
 
-- Create a User Account
+- [Generate Authorization Token](#generate-authorization-token)
 
-- Upload Multiple Images
+- [Create a User Account](#create-a-user-account)
 
-	- Get Upload URLs
+- [Upload Multiple Images](#upload-multiple-images)
 
-	- Directly Upload Image Files
+	- [Get Upload URLs](#get-upload-urls)
 
-	- Notify Bit-image
+	- [Directly Upload Image Files](#directly-upload-image-files)
+
+	- [Notify Bit-image](#notify-bit-image)
 
 - Get Image Summary List
 
@@ -70,6 +72,7 @@ Bit-image is a fast and straight-forward service that allows you to upload, stor
 
 
 ## Overview
+-----
 
 ### Entity Relationship
 
@@ -84,13 +87,14 @@ Bit-image is a fast and straight-forward service that allows you to upload, stor
 - A content label can be associated to many images
 
 
-### Running Locally
+## Running Locally
+-----
 
 Bit-image requires AWS S3 and Rekognition, PostgreSQL, and Beanstalkd as dependencies.
 
 Please update `src/main/resources/application.dev.properties` with AWS credentials, a PostgreSQL server host, and a Beanstalkd server host before running the app.
 
-#### Docker
+### Docker
 
 Running the Java Gradle build is easy with Docker compose.
 
@@ -98,11 +102,11 @@ Running the Java Gradle build is easy with Docker compose.
 docker-compose up
 ```
 
-#### Source
+### Source
 
 Aternatively, to build from source
 
-#### Prerequisites
+### Prerequisites
 
 - [Gradle 6.7.1](https://gradle.org/releases/)
 
@@ -127,8 +131,9 @@ gradle run
 ```
 
 ## Architecture
+-----
 
-## Authorization
+### Authorization
 
 Bit-image is secured with token based authorization. I wrote a seperate service (CAS, Central Auth Service) a few years back and thought it'd be cool to integrate. CAS handles storing user state for sign-ups and logins as well as generating and validating tokens.
 
@@ -136,11 +141,12 @@ Bit-image is secured with token based authorization. I wrote a seperate service 
 
 ### Upload and Storage
 
-Bit-image is designed with a non-blocking web server that handles requests quickly. When images are uploaded by clients, Bit-image pulls the images' metadata from AWS S3 into PostgreSQL storage. A job is then published into the Beanstalkd queue notifying the Analysis service (within a seperate bounded context). A seperate maintained thread pool handles reading messages off the queue and calling the Image Analysis service. The image analysis service is responsible for extracting content within images (using AWS Rekognition), and storing them as content labels in PostgreSQL. This allows users to search their images by content.
+Bit-image is designed with a non-blocking web server that handles requests quickly. When images are uploaded by clients, Bit-image pulls the images' metadata from AWS S3 into PostgreSQL storage. A job is then published into the Beanstalkd queue notifying the Analysis service (within a seperate bounded context). A seperate maintained thread pool handles reading messages off the queue and calling the Image Analysis service to process long running jobs (extracting content within images using AWS Rekognition, and storing them as content labels in PostgreSQL). This allows users to search their images by content.
 
 ![Image description](docs/architecture/imageservice.png)
 
 ## Deployment
+-----
 
 ### Java Server
 
@@ -168,6 +174,7 @@ The Beanstalkd message queue is deployed in a single Digital Ocean droplet.
 ![Image description](docs/deployment/beanstalktubes.png)
 
 ## Using the API
+-----
 
 Let's see how to send some cURL HTTP requests to interact with the public and authorized API endpoints.
 
@@ -286,10 +293,8 @@ This process can be easily automated with a client-side implementation.
 
 Example Request (Upload Image File To URL)
 
-```
 ![Image description](docs/api/uploadimages3.png)
 ![Image description](docs/api/uploadimages3body.png)
-```
 
 *It is important to upload our file as a binary
 

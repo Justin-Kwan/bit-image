@@ -93,19 +93,19 @@ public class LabelDAO {
   public void createTriggerToDeleteOrphanedLabels() throws Exception {
     final String sql =
         """
-		  DROP TRIGGER IF EXISTS delete_orphaned_content_labels_after_user_deleted
-		  	ON public.users;
+      DROP TRIGGER IF EXISTS delete_orphaned_content_labels_after_user_deleted
+        ON public.users;
 
-		  DROP TRIGGER IF EXISTS delete_orphaned_content_labels_after_images_deleted
-		  	ON public.images;
+      DROP TRIGGER IF EXISTS delete_orphaned_content_labels_after_images_deleted
+        ON public.images;
 
-		  CREATE TRIGGER delete_orphaned_content_labels_after_user_deleted
+      CREATE TRIGGER delete_orphaned_content_labels_after_user_deleted
         AFTER DELETE ON public.users
         EXECUTE PROCEDURE delete_orhpaned_content_labels();
 
-		  CREATE TRIGGER delete_orphaned_content_labels_after_images_deleted
-		    AFTER DELETE ON public.images
-		  	EXECUTE PROCEDURE delete_orhpaned_content_labels();
+      CREATE TRIGGER delete_orphaned_content_labels_after_images_deleted
+        AFTER DELETE ON public.images
+        EXECUTE PROCEDURE delete_orhpaned_content_labels();
 	  """;
 
     this.queryExecutor.write(new SQLQuery(sql));

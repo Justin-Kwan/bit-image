@@ -19,6 +19,7 @@ public class EnvReader {
       System.out.println("Error reading property env file '%s'".formatted(ENV_FILE_NAME));
     }
 
+    props.list(System.out);
     return this.mapToGlobalEnv(props);
   }
 

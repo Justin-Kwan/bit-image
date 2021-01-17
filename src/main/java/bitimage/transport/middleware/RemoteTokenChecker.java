@@ -28,15 +28,19 @@ public class RemoteTokenChecker implements ITokenChecker<HttpHeaders> {
   public String doAuthCheck(HttpHeaders headers) throws Exception {
     this.assertHeadersContainToken(headers);
 
-    final String authToken = headers.getAuthorization().get();
-    final RequestBody tokenCheckRequest = this.getTokenCheckRequestBody(authToken);
-    final String tokenCheckResponse = this.fetchAuthCheck(tokenCheckRequest);
+    try {
+      final String authToken = headers.getAuthorization().get();
+      final RequestBody tokenCheckRequest = this.getTokenCheckRequestBody(authToken);
+      final String tokenCheckResponse = this.fetchAuthCheck(tokenCheckRequest);
 
-    if (!this.isUserAuthorized(tokenCheckResponse)) {
+      if (!this.isUserAuthorized(tokenCheckResponse)) {
+        throw new UnauthorizedException();
+      }
+
+      return this.getTokenUserID(tokenCheckResponse);
+    } catch (Exception e) {
       throw new UnauthorizedException();
     }
-
-    return this.getTokenUserID(tokenCheckResponse);
   }
 
   private void assertHeadersContainToken(HttpHeaders headers) {

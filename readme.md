@@ -1,8 +1,6 @@
 
 # Bit-image
 
-
-
 ```
    ___ _ _   _                            
   / __(_) |_(_)_ __ ___   __ _  __ _  ___ 
@@ -135,13 +133,19 @@ gradle run
 
 ### Authorization
 
-Bit-image is secured with token based authorization. I wrote a seperate service (CAS, Central Auth Service) a few years back and thought it'd be cool to integrate. CAS handles storing user state for sign-ups and logins as well as generating and validating tokens.
+Bit-image is secured with token based authorization.
+
+I wrote a seperate service (CAS, Central Auth Service) a few years back and thought it'd be cool to integrate. CAS handles storing user state for sign-ups and logins as well as generating and validating tokens.
+
+- https://github.com/Justin-Kwan/CAS
 
 ![Image description](docs/architecture/authorization.png)
 
 ### Upload and Storage
 
-Bit-image is designed with a non-blocking web server that handles requests quickly. When images are uploaded by clients, Bit-image pulls the images' metadata from AWS S3 into PostgreSQL storage. A job is then published into the Beanstalkd queue notifying the Analysis service (within a seperate bounded context). A seperate maintained thread pool handles reading messages off the queue and calling the Image Analysis service to process long running jobs (extracting content within images using AWS Rekognition, and storing them as content labels in PostgreSQL). This allows users to search their images by content.
+Bit-image is designed with a non-blocking web server that handles requests quickly. When images are uploaded by clients, Bit-image pulls the images' metadata from AWS S3 into PostgreSQL storage.
+
+A job is then published into the Beanstalkd queue notifying the Analysis service (within a seperate bounded context). A seperate maintained thread pool handles reading messages off the queue and calling the Image Analysis service to process long running jobs (extracting content within images using AWS Rekognition, and storing them as content labels in PostgreSQL). This allows users to search their images by content.
 
 ![Image description](docs/architecture/imageservice.png)
 
@@ -300,11 +304,11 @@ Example Request (Upload Image File To URL)
 
 #### Notify Bit-image
 
-When notifying Bit-image that up to 5 images are uploaded, please use a POST request, specifying the name and custom tags that we want to associate to each image. (You can search our images by these later).
+When notifying Bit-image that up to 5 images are uploaded, make a POST request with the name and custom tags to associate with each image. (You can search images by these later).
 
-You also need to specify the MD5 hash of our 5 images in the request body as well. This is important because it allows Bit-image to determine the you've uploaded the correct image, and that your custom provided data will synchronize with the correct image.
+The MD5 hash of the 5 images should be specified in the request body as well. This allows Bit-image to determine the you've uploaded the correct image, and that your custom provided data will synchronize with the correct image.
 
-Here's an useful site to generate the MD5 hash of your image:
+MD5 hash generator:
 - https://md5file.com/calculator
 
 Definition
@@ -365,7 +369,7 @@ curl http://54.198.201.117/api/v1/images
 }'
 ```
 
-Our list of images will be returned in a summarized format, with a generated view link for each one. We can click on these links to view our images! Note that these image view links will expire after 1 hour.
+A list of images will be returned in a summarized format, with a generated view link for each one. You can click on the links to view your images! Note that these image view links will expire after 1 hour.
 
 Example Response
 
@@ -414,7 +418,7 @@ Example Error (415 Unsupported Media Type, Incorrect image format)
 
 #### By Name, Tag or Content Label
 
-You can get a summarized list of yourimages by fuzzy matching against a tag or image name which you've provided, or by the contents of the actual image.
+You can get a summarized list of yourimages by fuzzy searching for a tag or image name, or by the contents of the actual image.
 
 Definition
 

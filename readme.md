@@ -28,7 +28,7 @@ Bit-image is a fast and straight-forward service that allows you to upload, stor
 
     - [Source](#source)
 
-    - [Prerequisites](#prerequisites)
+        - [Prerequisites](#prerequisites)
 
 - [Architecture](#Architecture)
 
@@ -58,17 +58,17 @@ Bit-image is a fast and straight-forward service that allows you to upload, stor
 
 	- [Notify Bit-image](#notify-bit-image)
 
-- Get Image Summary List
+- [Get Image Summary List](#get-image-summary-list)
 
-	- By Name, Tag or Content Label
+	- [By Name, Tag or Content Label](#by-name,-tag,-or-content-label)
 
-	- Public Images
+	- [Public Images](#public-images)
 
-- Get Single Expanded Image
+- [Get Single Expanded Image](#get-single-expanded-image)
 
-- Delete Multiple Images
+- [Delete Multiple Images](#delete-multiple-images)
 
-- Deleting User Account
+- [Delete User Account](#delete-user-account)
 
 
 ## Overview
@@ -207,7 +207,7 @@ Example Response
 
 ### Create a User Account
 
-Now, that you are signed up and have your auth token, you can create your user account with Bit-image service.
+Now, that you are signed up and have your auth token, you can create an user account with Bit-image service.
 
 Definition
 ```

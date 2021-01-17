@@ -49,11 +49,13 @@ public class Container {
   private final GlobalEnv env;
   private final Logger logger;
   private final ExecutorService workerPool;
+  private final ConnectionHandler sqlConnectionHandler;
 
   public Container() {
     this.env = new EnvReader().read();
     this.workerPool = Executors.newCachedThreadPool();
     this.logger = Logger.getLogger("Container logger");
+    this.sqlConnectionHandler = ConnectionHandler.CreateNew(this.env);
 
     this.logger.log(Level.INFO, "Wiring up application components");
   }
@@ -159,7 +161,7 @@ public class Container {
 
   @Singleton
   public ConnectionHandler provideSQLConnectionHandler() {
-    return ConnectionHandler.CreateNew(this.env);
+    return this.sqlConnectionHandler;
   }
 
   /** Providing event handler components which allow communication between bounded contexts * */

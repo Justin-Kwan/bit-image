@@ -12,7 +12,7 @@
                                |___/      
 ```
 
-This is my submission for the Shopify Summer 2021 Backend developer internship coding challenge.
+This is my coding challenge submission for the Shopify Summer 2021 backend developer internship.
 
 Bit-image is a fast and straight-forward service that allows you to upload, store, and view your images online.
 
@@ -69,6 +69,21 @@ Bit-image is a fast and straight-forward service that allows you to upload, stor
 - Deleting User Account
 
 
+## Overview
+
+### Entity Relationship
+
+- An user can have many images
+
+- An image can have many tags
+
+- A tag can be associated to many images (useful for searching images by tag)
+
+- An image can have many content labels
+
+- A content label can be associated to many images
+
+
 ### Running Locally
 
 Bit-image requires AWS S3 and Rekognition, PostgreSQL, and Beanstalkd as dependencies.
@@ -111,28 +126,26 @@ gradle build
 gradle run
 ```
 
+## Architecture
 
-## Overview
+## Authorization
 
-### Entity Relationship
+Bit-image is secured with token based authorization. I wrote a seperate service (CAS, Central Auth Service) a few years back and thought it'd be cool to integrate. CAS handles storing user state for sign-ups and logins as well as generating and validating tokens.
 
-- An user can have many images
+![Image description](docs/architecture/authorization.png)
 
-- An image can have many tags
+### Upload and Storage
 
-- A tag can be associated to many images (useful for searching images by tag)
+Bit-image is designed with a non-blocking web server that handles requests quickly. When images are uploaded by clients, Bit-image pulls the images' metadata from AWS S3 into PostgreSQL storage. A job is then published into the Beanstalkd queue notifying the Analysis service (within a seperate bounded context). A seperate maintained thread pool handles reading messages off the queue and calling the Image Analysis service. The image analysis service is responsible for extracting content within images (using AWS Rekognition), and storing them as content labels in PostgreSQL. This allows users to search their images by content.
 
-- An image can have many content labels
-
-- A content label can be associated to many images
-
+![Image description](docs/architecture/imageservice.png)
 
 ## Deployment
 
 ### Java Server
 
 
-The Bit-image Java and Micronaut server is Dockerized and deployed on an AWS EC2 instance. We can attach Bit-image's EC2 instance to an autoscaling group to provide higher availability if and when the load and traffice requires it.
+The Bit-image Java and Micronaut server is Dockerized and deployed on an AWS EC2 instance. Bit-image's EC2 instance can be attached to an autoscaling group to provide higher availability if and when the load and traffice requires it.
 
 ![Image description](docs/deployment/ec2.png)
 
@@ -187,7 +200,7 @@ Example Response
 
 ### Create a User Account
 
-Now, that we are signed up and have our auth token, we need to create our user account with Bit-image service.
+Now, that you are signed up and have your auth token, you can create your user account with Bit-image service.
 
 Definition
 ```
@@ -224,7 +237,7 @@ Example Error (409 Conflict, User Already Exists)
 
 #### Get upload URLs
 
-We (as the client) can request for multiple upload urls (pointing to an AWS S3 bucket) which we will then directly upload our images to. We should specify the number or upload urls that should be returned, which should match the number of images we wish to upload. We can ask Bit-image for up to 1000 upload urls at a time.
+You (as the client) can request for multiple upload urls (pointing to an AWS S3 bucket) which we will then directly upload our images to. We should specify the number or upload urls that should be returned, which should match the number of images you wish to upload. You can ask Bit-image for up to 1000 upload urls at a time.
 
 Definition
 
@@ -267,7 +280,7 @@ Example Response
 
 #### Directly Upload Image Files
 
-Let's now upload our image files directly to AWS S3. Only 5 images should be uploaded at a time to our provided image upload URLs. We will then notify the Bit-image after every 5 image uploads (to prevent blocking the web-server and potential memory usage bottlenecks).
+You are able to directly upload your images to AWS S3. Only 5 images should be uploaded at a time to our provided image upload URLs. Bit-image should be notified after every 5 image uploads (to prevent blocking the web-server and potential memory usage bottlenecks).
 
 This process can be easily automated with a client-side implementation.
 
@@ -282,9 +295,9 @@ Example Request (Upload Image File To URL)
 
 #### Notify Bit-image
 
-When notifying Bit-image that up to 5 images are uploaded, we should use a POST request, specifying the name and custom tags that we want to associate to each image. (We can search our images by these later).
+When notifying Bit-image that up to 5 images are uploaded, please use a POST request, specifying the name and custom tags that we want to associate to each image. (You can search our images by these later).
 
-We also need to specify the MD5 hash of our 5 images in the request body as well. This is important because it allows us to determine the you've uploaded the correct image, and that your custom provided data will synchronize with the correct image.
+You also need to specify the MD5 hash of our 5 images in the request body as well. This is important because it allows Bit-image to determine the you've uploaded the correct image, and that your custom provided data will synchronize with the correct image.
 
 Here's an useful site to generate the MD5 hash of your image:
 - https://md5file.com/calculator
@@ -372,7 +385,7 @@ Example Response
 }
 ```
 
-Example Error (413 Request Entity Too LArge, Image size exceeds limit)
+Example Error (413 Request Entity Too Large, Image size exceeds limit)
 ```
 {
 	"error": "Resource size exceeds upload limit",
@@ -396,7 +409,7 @@ Example Error (415 Unsupported Media Type, Incorrect image format)
 
 #### By Name, Tag or Content Label
 
-We can get a summarized list of our own images by fuzzy matching against a tag or image name which we provided, or by the contents of the actual image.
+You can get a summarized list of yourimages by fuzzy matching against a tag or image name which you've provided, or by the contents of the actual image.
 
 Definition
 

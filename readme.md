@@ -36,6 +36,8 @@ Bit-image is a fast and distributed image repository that allows you to upload, 
 
     - [Upload and Storage](#upload-and-storage)
 
+      - [Data Schema](#data-schema)
+
 - [Deployment](#Deployment)
 
     - [Java Server](#java-server)
@@ -69,6 +71,8 @@ Bit-image is a fast and distributed image repository that allows you to upload, 
    - [Delete Multiple Images](#delete-multiple-images)
 
    - [Delete User Account](#delete-user-account)
+
+- [Todo](#Todo)
 
 - [Tools and Frameworks Used](#tools-and-frameworks-used)
 
@@ -172,6 +176,10 @@ A job is then published into the Beanstalkd queue notifying the Analysis service
 A seperate maintained thread pool handles reading messages off the queue and calling the Image Analysis service to process long running jobs (extracting content within images using AWS Rekognition, and storing them as content labels in PostgreSQL). This allows users to search their images by content.
 
 ![Image description](docs/architecture/imageservice.png)
+
+#### Data Schema
+
+![Image description](docs/architecture/dataschema.png)
 
 ## Deployment
 -----
@@ -676,7 +684,7 @@ curl 'http://54.198.201.117/api/v1/users/0e2d2c9a-b24a-47fd-b017-3fdc8156d057' \
     -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNob3BpZnlAZW1haWwuY29tIiwidXNlcl9pZCI6IjczNTc4ODAyLWRmZWEtNDVjZi1iYjQzLWJhZmZiOTNhZDhiYiJ9.q9p4zTi0QRINxnUK-VC_eqX0k5WEPHM9OzvdwcYs3UI"
 ```
 
-### TODO
+### Todo
 
 - [ ] Migrate to use HTTPS for all endpoints
 - [ ] Implement pagination for serving image results

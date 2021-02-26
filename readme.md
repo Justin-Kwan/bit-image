@@ -10,8 +10,6 @@
                                |___/      
 ```
 
-This is my coding challenge submission for the Shopify Summer 2021 backend developer internship.
-
 Bit-image is a fast and distributed image repository that allows you to upload, store, and view your images online.
 
 ## Table of Contents

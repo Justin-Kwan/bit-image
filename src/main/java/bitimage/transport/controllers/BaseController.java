@@ -1,6 +1,6 @@
 package bitimage.transport.controllers;
 
-import bitimage.transport.errors.HttpExceptionHandler;
+import bitimage.transport.exceptions.HttpExceptionHandler;
 import bitimage.transport.middleware.ITokenChecker;
 import io.micronaut.http.HttpResponse;
 

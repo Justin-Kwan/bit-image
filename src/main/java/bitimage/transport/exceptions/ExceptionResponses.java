@@ -1,9 +1,9 @@
-package bitimage.transport.errors;
+package bitimage.transport.exceptions;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 
-public class ErrorResponses {
+public class ExceptionResponses {
 
   public static HttpResponse<Object> unauthorizedAccess(String message) {
     final String responseBody = """

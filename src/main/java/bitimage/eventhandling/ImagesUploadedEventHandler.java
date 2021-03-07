@@ -18,7 +18,6 @@ public class ImagesUploadedEventHandler implements IEventHandler {
 
   public void handle(String message) throws Exception {
     final List<ExtractImageContentsCmd> cmds = this.mapper.mapToExtractImageContentsCmd(message);
-
     this.service.extractImageContents(cmds);
   }
 }

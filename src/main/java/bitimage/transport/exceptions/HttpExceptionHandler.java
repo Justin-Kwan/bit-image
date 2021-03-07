@@ -1,4 +1,4 @@
-package bitimage.transport.errors;
+package bitimage.transport.exceptions;
 
 import bitimage.domain.uploading.exceptions.ImageAlreadyExistsException;
 import bitimage.domain.uploading.exceptions.ImageFormatInvalidException;
@@ -17,28 +17,28 @@ public class HttpExceptionHandler {
     HttpExceptionHandler.doLogError(e);
 
     if (e instanceof UnauthorizedException) {
-      return ErrorResponses.unauthorizedAccess(e.getMessage());
+      return ExceptionResponses.unauthorizedAccess(e.getMessage());
     }
     if (e instanceof ImageNotFoundException) {
-      return ErrorResponses.resourceNotFound(e.getMessage());
+      return ExceptionResponses.resourceNotFound(e.getMessage());
     }
     if (e instanceof UserNotFoundException) {
-      return ErrorResponses.resourceNotFound(e.getMessage());
+      return ExceptionResponses.resourceNotFound(e.getMessage());
     }
     if (e instanceof ImageAlreadyExistsException) {
-      return ErrorResponses.resourceAlreadyExists(e.getMessage());
+      return ExceptionResponses.resourceAlreadyExists(e.getMessage());
     }
     if (e instanceof ImageSizeExceededException) {
-      return ErrorResponses.resourceSizeExceedsLimit(e.getMessage());
+      return ExceptionResponses.resourceSizeExceedsLimit(e.getMessage());
     }
     if (e instanceof ImageFormatInvalidException) {
-      return ErrorResponses.resourceMediaTypeUnsupported(e.getMessage());
+      return ExceptionResponses.resourceMediaTypeUnsupported(e.getMessage());
     }
     if (e instanceof UserAlreadyExistsException) {
-      return ErrorResponses.resourceAlreadyExists(e.getMessage());
+      return ExceptionResponses.resourceAlreadyExists(e.getMessage());
     }
 
-    return ErrorResponses.internalServerError();
+    return ExceptionResponses.internalServerError();
   }
 
   /** Logs exception message and entire stack trace on error. */

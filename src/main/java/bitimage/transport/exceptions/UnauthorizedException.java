@@ -1,4 +1,4 @@
-package bitimage.transport.errors;
+package bitimage.transport.exceptions;
 
 public class UnauthorizedException extends RuntimeException {
   public UnauthorizedException() {

@@ -45,7 +45,6 @@ public class AwsImageClassifier {
       IAwsEnv env,
       IExceptionTranslator<AmazonServiceException, RuntimeException> awsExceptionTranslator) {
     final var awsCredentials = new BasicAWSCredentials(env.getAwsAccessID(), env.getAwsAccessKey());
-
     final var rekognitionClient = new AmazonRekognitionClient(awsCredentials);
 
     final var awsImageClassifier =
@@ -93,7 +92,6 @@ public class AwsImageClassifier {
         new RecognizeCelebritiesRequest().withImage(this.newRekognitionImage(fileID, folderName));
 
     RecognizeCelebritiesResult result = this.rekognitionClient.recognizeCelebrities(request);
-
     List<Celebrity> detectedCelebrities = result.getCelebrityFaces();
 
     return detectedCelebrities;
@@ -106,7 +104,6 @@ public class AwsImageClassifier {
             .withMinConfidence(this.MIN_LABEL_CONFIDENCE_SCORE);
 
     DetectModerationLabelsResult result = this.rekognitionClient.detectModerationLabels(request);
-
     List<ModerationLabel> detectedUnsafeContents = result.getModerationLabels();
 
     return detectedUnsafeContents;

@@ -1,7 +1,8 @@
 package bitimage.transport.middleware;
 
 import bitimage.regexp.RegexPatterns;
-import bitimage.transport.errors.UnauthorizedException;
+import bitimage.transport.exceptions.UnauthorizedException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.http.HttpHeaders;
 import java.io.IOException;
@@ -26,21 +27,25 @@ public class RemoteTokenChecker implements ITokenChecker<HttpHeaders> {
 
   /** Calls remote CAS auth service to verify token is valid, then returns user id of token. */
   public String doAuthCheck(HttpHeaders headers) throws Exception {
-    this.assertHeadersContainToken(headers);
-
     try {
-      final String authToken = headers.getAuthorization().get();
-      final RequestBody tokenCheckRequest = this.getTokenCheckRequestBody(authToken);
-      final String tokenCheckResponse = this.fetchAuthCheck(tokenCheckRequest);
-
-      if (!this.isUserAuthorized(tokenCheckResponse)) {
-        throw new UnauthorizedException();
-      }
-
-      return this.getTokenUserID(tokenCheckResponse);
+      return this.doTokenCheck(headers);
     } catch (Exception e) {
       throw new UnauthorizedException();
     }
+  }
+
+  private String doTokenCheck(HttpHeaders headers) throws Exception {
+    this.assertHeadersContainToken(headers);
+
+    final String authToken = headers.getAuthorization().get();
+    final RequestBody tokenCheckRequest = this.getTokenCheckRequestBody(authToken);
+    final String tokenCheckResponse = this.fetchAuthCheck(tokenCheckRequest);
+
+    if (!this.isUserAuthorized(tokenCheckResponse)) {
+      throw new UnauthorizedException();
+    }
+
+    return this.getTokenUserID(tokenCheckResponse);
   }
 
   private void assertHeadersContainToken(HttpHeaders headers) {

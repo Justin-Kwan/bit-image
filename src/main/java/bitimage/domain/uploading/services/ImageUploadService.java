@@ -1,7 +1,7 @@
 package bitimage.domain.uploading.services;
 
 import bitimage.domain.common.entities.EntityID;
-import bitimage.domain.sharedkernel.entities.Image;
+import bitimage.domain.common.entities.Image;
 import bitimage.domain.uploading.commands.CreateImageCmd;
 import bitimage.domain.uploading.entities.FileUrl;
 import bitimage.domain.uploading.entities.ImageMetadata;

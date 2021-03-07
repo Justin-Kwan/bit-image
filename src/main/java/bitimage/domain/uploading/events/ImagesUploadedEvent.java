@@ -1,7 +1,7 @@
 package bitimage.domain.uploading.events;
 
 import bitimage.domain.common.events.IDomainEvent;
-import bitimage.domain.sharedkernel.entities.Image;
+import bitimage.domain.common.entities.Image;
 import java.time.Instant;
 import java.util.List;
 

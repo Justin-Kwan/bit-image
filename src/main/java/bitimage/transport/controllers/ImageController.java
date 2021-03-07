@@ -1,15 +1,15 @@
 package bitimage.transport.controllers;
 
-import bitimage.domain.sharedkernel.entities.Image;
+import bitimage.domain.common.entities.Image;
 import bitimage.domain.uploading.commands.CreateImageCmd;
 import bitimage.domain.uploading.entities.FileUrl;
 import bitimage.domain.uploading.services.ImageUploadService;
-import bitimage.regex.RegexPatterns;
-import bitimage.transport.adapters.dto.ImageDTO;
-import bitimage.transport.adapters.dto.ImageUploadUrlsDTO;
-import bitimage.transport.adapters.dto.ImagesDTO;
-import bitimage.transport.adapters.dto.SearchImageDTO;
-import bitimage.transport.adapters.mappers.ImageControllerMapper;
+import bitimage.regexp.RegexPatterns;
+import bitimage.transport.dto.ImageDTO;
+import bitimage.transport.dto.ImageUploadUrlsDTO;
+import bitimage.transport.dto.ImagesDTO;
+import bitimage.transport.dto.SearchImageDTO;
+import bitimage.transport.mappers.ImageControllerMapper;
 import bitimage.transport.middleware.ITokenChecker;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
@@ -81,8 +81,9 @@ public class ImageController extends BaseController {
   @Get("/{image_id}/expanded")
   public HttpResponse<Object> getImage(
       HttpHeaders headers,
-      @Pattern(regexp = RegexPatterns.UUID, message = "Image id must be a valid UUID") @NotBlank
-          String image_id) {
+      @Pattern(regexp = RegexPatterns.UUID, message = "Image id must be a valid UUID")
+      @NotBlank
+      String image_id) {
 
     return super.handleRequest(() -> {
       final String user_id = super.tokenChecker.doAuthCheck(headers);

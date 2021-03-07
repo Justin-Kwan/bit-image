@@ -1,8 +1,8 @@
 package bitimage.domain.analysis.entities;
 
 import bitimage.domain.analysis.ports.IImageClassifier;
-import bitimage.domain.sharedkernel.entities.Image;
-import bitimage.domain.sharedkernel.entities.Label;
+import bitimage.domain.common.entities.Image;
+import bitimage.domain.common.entities.Label;
 import java.util.ArrayList;
 import java.util.List;
 

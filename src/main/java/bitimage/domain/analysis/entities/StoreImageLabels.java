@@ -1,7 +1,7 @@
 package bitimage.domain.analysis.entities;
 
 import bitimage.domain.analysis.ports.ILabelStore;
-import bitimage.domain.sharedkernel.entities.Label;
+import bitimage.domain.common.entities.Label;
 import java.util.List;
 
 public class StoreImageLabels implements IFilter<List<Label>, Void> {

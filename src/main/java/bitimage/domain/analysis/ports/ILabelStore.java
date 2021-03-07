@@ -1,6 +1,6 @@
 package bitimage.domain.analysis.ports;
 
-import bitimage.domain.sharedkernel.entities.Label;
+import bitimage.domain.common.entities.Label;
 import java.util.List;
 
 public interface ILabelStore {

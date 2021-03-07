@@ -3,7 +3,7 @@ package bitimage.domain.uploading.entities;
 import bitimage.domain.common.entities.EntityID;
 import bitimage.domain.uploading.exceptions.ImageFormatInvalidException;
 import bitimage.domain.uploading.exceptions.ImageSizeExceededException;
-import bitimage.regex.RegexPatterns;
+import bitimage.regexp.RegexPatterns;
 
 public class ImageMetadata {
 

@@ -4,6 +4,7 @@ import bitimage.transport.errors.HttpExceptionHandler;
 import bitimage.transport.middleware.ITokenChecker;
 import io.micronaut.http.HttpResponse;
 
+
 public abstract class BaseController {
 
   protected final ITokenChecker tokenChecker;
@@ -12,6 +13,7 @@ public abstract class BaseController {
     this.tokenChecker = tokenChecker;
   }
 
+  /** Wraps service core exception handling and translation to http responses. */
   protected HttpResponse<Object> handleRequest(IRequestHandler requestHandler) {
     HttpResponse<Object> httpResponse;
 

@@ -448,7 +448,7 @@ Example Error (415 Unsupported Media Type, Incorrect image format)
 
 #### By Name, Tag or Content Label
 
-You can get a summarized list of yourimages by fuzzy searching for a tag or image name, or by the contents of the actual image.
+You can get a summarized list of your images by fuzzy searching for a tag or image name, or by the contents of the actual image.
 
 Definition
 

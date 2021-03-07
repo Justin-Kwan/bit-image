@@ -1,7 +1,8 @@
 package bitimage.domain.analysis.entities;
 
-import bitimage.domain.sharedkernel.entities.Label;
-import bitimage.regex.RegexPatterns;
+import bitimage.domain.common.entities.Label;
+import bitimage.regexp.RegexPatterns;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

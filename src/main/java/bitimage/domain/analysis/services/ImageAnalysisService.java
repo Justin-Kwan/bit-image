@@ -7,7 +7,7 @@ import bitimage.domain.analysis.entities.StoreImageLabels;
 import bitimage.domain.analysis.ports.IImageClassifier;
 import bitimage.domain.analysis.ports.ILabelStore;
 import bitimage.domain.common.entities.EntityID;
-import bitimage.domain.sharedkernel.entities.Image;
+import bitimage.domain.common.entities.Image;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

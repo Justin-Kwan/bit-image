@@ -1,6 +1,6 @@
 package bitimage.transport.middleware;
 
-import bitimage.regex.RegexPatterns;
+import bitimage.regexp.RegexPatterns;
 import bitimage.transport.errors.UnauthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.http.HttpHeaders;
@@ -65,7 +65,6 @@ public class RemoteTokenChecker implements ITokenChecker<HttpHeaders> {
     final var client = new OkHttpClient();
 
     final var req = new Request.Builder().url(remoteApiHostPort).post(tokenCheckRequest).build();
-
     final String res = client.newCall(req).execute().body().string();
 
     return res;

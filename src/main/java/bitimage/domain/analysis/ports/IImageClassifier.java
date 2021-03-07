@@ -1,7 +1,7 @@
 package bitimage.domain.analysis.ports;
 
-import bitimage.domain.sharedkernel.entities.Image;
-import bitimage.domain.sharedkernel.entities.Label;
+import bitimage.domain.common.entities.Image;
+import bitimage.domain.common.entities.Label;
 import java.util.List;
 
 public interface IImageClassifier {

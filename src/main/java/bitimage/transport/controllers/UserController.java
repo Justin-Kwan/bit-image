@@ -2,8 +2,8 @@ package bitimage.transport.controllers;
 
 import bitimage.domain.uploading.entities.User;
 import bitimage.domain.uploading.services.UserService;
-import bitimage.transport.adapters.dto.UserDTO;
-import bitimage.transport.adapters.mappers.UserControllerMapper;
+import bitimage.transport.dto.UserDTO;
+import bitimage.transport.mappers.UserControllerMapper;
 import bitimage.transport.middleware.ITokenChecker;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;

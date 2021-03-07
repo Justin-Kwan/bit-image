@@ -1,37 +1,37 @@
 package bitimage.wire;
 
-import bitimage.deeplearning.adapters.classifiers.ImageClassifier;
-import bitimage.deeplearning.adapters.mappers.ImageClassifierMapper;
-import bitimage.deeplearning.aws.AwsImageClassifier;
+import bitimage.classification.ImageClassifier;
+import bitimage.classification.mappers.ImageClassifierMapper;
+import bitimage.classification.rekognition.AwsImageClassifier;
 import bitimage.domain.analysis.services.ImageAnalysisService;
 import bitimage.domain.uploading.events.ImagesUploadedEvent;
 import bitimage.domain.uploading.events.UserDeletedEvent;
 import bitimage.domain.uploading.services.ImageUploadService;
 import bitimage.domain.uploading.services.UserService;
-import bitimage.env.EnvReader;
-import bitimage.env.GlobalEnv;
-import bitimage.events.IEventHandler;
-import bitimage.events.ImagesUploadedEventHandler;
-import bitimage.events.UserDeletedEventHandler;
-import bitimage.events.mappers.EventHandlerMapper;
-import bitimage.messaging.adapters.connectors.MessagePublisher;
-import bitimage.messaging.adapters.connectors.MessageReader;
+import bitimage.environment.EnvReader;
+import bitimage.environment.GlobalEnv;
+import bitimage.eventhandling.IEventHandler;
+import bitimage.eventhandling.ImagesUploadedEventHandler;
+import bitimage.eventhandling.UserDeletedEventHandler;
+import bitimage.eventhandling.mappers.EventHandlerMapper;
+import bitimage.messaging.MessagePublisher;
+import bitimage.messaging.MessageReader;
 import bitimage.messaging.beanstalk.BeanstalkMessageQueue;
 import bitimage.messaging.beanstalk.BeanstalkTubeNames;
-import bitimage.storage.adapters.datastores.ImageStore;
-import bitimage.storage.adapters.datastores.LabelStore;
-import bitimage.storage.adapters.datastores.UserStore;
-import bitimage.storage.adapters.mappers.ImageStoreMapper;
-import bitimage.storage.adapters.mappers.LabelStoreMapper;
-import bitimage.storage.adapters.mappers.UserStoreMapper;
-import bitimage.storage.aws.AwsExceptionTranslator;
-import bitimage.storage.aws.S3FileSystem;
-import bitimage.storage.dao.DAOFactory;
-import bitimage.storage.pg.connection.ConnectionHandler;
-import bitimage.storage.pg.query.QueryExecutor;
-import bitimage.storage.pg.query.SQLExceptionTranslator;
-import bitimage.transport.adapters.mappers.ImageControllerMapper;
-import bitimage.transport.adapters.mappers.UserControllerMapper;
+import bitimage.storage.ImageStore;
+import bitimage.storage.LabelStore;
+import bitimage.storage.UserStore;
+import bitimage.storage.mappers.ImageStoreMapper;
+import bitimage.storage.mappers.LabelStoreMapper;
+import bitimage.storage.mappers.UserStoreMapper;
+import bitimage.storage.postgres.dao.DAOFactory;
+import bitimage.storage.postgres.connection.ConnectionHandler;
+import bitimage.storage.postgres.query.QueryExecutor;
+import bitimage.storage.postgres.query.SQLExceptionTranslator;
+import bitimage.storage.s3.S3ExceptionTranslator;
+import bitimage.storage.s3.S3FileSystem;
+import bitimage.transport.mappers.ImageControllerMapper;
+import bitimage.transport.mappers.UserControllerMapper;
 import bitimage.transport.middleware.RemoteTokenChecker;
 import io.micronaut.context.annotation.Factory;
 import java.util.HashMap;
@@ -53,8 +53,8 @@ public class Container {
 
   public Container() {
     this.env = new EnvReader().read();
-    this.workerPool = Executors.newCachedThreadPool();
     this.logger = Logger.getLogger("Container logger");
+    this.workerPool = Executors.newCachedThreadPool();
     this.sqlConnectionHandler = ConnectionHandler.CreateNew(this.env);
 
     this.logger.log(Level.INFO, "Wiring up application components");
@@ -133,8 +133,8 @@ public class Container {
     return AwsImageClassifier.CreateNew(this.env, this.provideAwsExceptionTranslator());
   }
 
-  public AwsExceptionTranslator provideAwsExceptionTranslator() {
-    return new AwsExceptionTranslator();
+  public S3ExceptionTranslator provideAwsExceptionTranslator() {
+    return new S3ExceptionTranslator();
   }
 
   public DAOFactory provideDAOFactory() {

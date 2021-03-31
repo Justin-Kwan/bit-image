@@ -687,7 +687,7 @@ curl 'http://54.198.201.117/api/v1/users/0e2d2c9a-b24a-47fd-b017-3fdc8156d057' \
 - [ ] Migrate to use HTTPS for all endpoints
 - [ ] Implement pagination for serving image results
 - [ ] Build CLI Client interface
-- [ ] Enforce transactional rollbacks between AWS S3 and PostgreSQL (to enforce data integrity)
+- [ ] Enforce transactional rollbacks between AWS S3 and PostgreSQL (to enforce image data consistency)
 
 ## Tools and Frameworks Used
 

@@ -8,33 +8,42 @@ import bitimage.domain.uploading.ports.IEventPublisher;
 import bitimage.domain.uploading.ports.IUserStore;
 import bitimage.storage.exceptions.StorageObjectAlreadyExistsException;
 
-public class UserService {
+public class UserService
+{
+    private final IUserStore userStore;
+    private final IEventPublisher eventPublisher;
 
-  private final IUserStore userStore;
-  private final IEventPublisher eventPublisher;
-
-  public UserService(IUserStore userStore, IEventPublisher eventPublisher) {
-    this.userStore = userStore;
-    this.eventPublisher = eventPublisher;
-  }
-
-  public User createUser(String providedUserID) throws Exception {
-    final EntityID userID = EntityID.CreateNew(providedUserID);
-    final User user = User.CreateNew(userID);
-
-    try {
-      this.userStore.addUser(user);
-    } catch (StorageObjectAlreadyExistsException e) {
-      throw new UserAlreadyExistsException();
+    public UserService(IUserStore userStore, IEventPublisher eventPublisher)
+    {
+        this.userStore = userStore;
+        this.eventPublisher = eventPublisher;
     }
 
-    return user;
-  }
+    public User createUser(String providedUserID)
+            throws Exception
+    {
+        EntityID userID = EntityID.CreateNew(providedUserID);
+        User user = User.CreateNew(userID);
 
-  public void deleteUser(String providedUserID) throws Exception {
-    final EntityID userID = EntityID.CreateNew(providedUserID);
-    this.userStore.deleteUserByID(userID);
+        try {
+            userStore.addUser(user);
+        }
+        catch (StorageObjectAlreadyExistsException e) {
+            throw new UserAlreadyExistsException();
+        }
 
-    this.eventPublisher.<UserDeletedEvent>publish(new UserDeletedEvent(userID));
-  }
+        return user;
+    }
+
+    /**
+     * Delete user and dispatch event to asynchronously
+     * mass delete user's images.
+     */
+    public void deleteUser(String providedUserID)
+            throws Exception
+    {
+        EntityID userID = EntityID.CreateNew(providedUserID);
+        userStore.deleteUserByID(userID);
+        eventPublisher.publish(new UserDeletedEvent(userID));
+    }
 }

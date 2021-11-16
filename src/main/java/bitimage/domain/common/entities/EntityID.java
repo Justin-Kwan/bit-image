@@ -2,31 +2,37 @@ package bitimage.domain.common.entities;
 
 import java.util.UUID;
 
-public class EntityID {
+public class EntityID
+{
+    public final UUID id;
 
-  public final UUID id;
+    private EntityID(UUID id)
+    {
+        this.id = id;
+    }
 
-  private EntityID(UUID id) {
-    this.id = id;
-  }
+    public static EntityID CreateNew()
+    {
+        return new EntityID(UUID.randomUUID());
+    }
 
-  public static EntityID CreateNew() {
-    return new EntityID(UUID.randomUUID());
-  }
+    public static EntityID CreateNew(String id)
+    {
+        return new EntityID(UUID.fromString(id));
+    }
 
-  public static EntityID CreateNew(String id) {
-    return new EntityID(UUID.fromString(id));
-  }
+    public static EntityID CreateNew(UUID id)
+    {
+        return new EntityID(id);
+    }
 
-  public static EntityID CreateNew(UUID id) {
-    return new EntityID(id);
-  }
+    public String toString()
+    {
+        return id.toString();
+    }
 
-  public String toString() {
-    return id.toString();
-  }
-
-  public UUID toUUID() {
-    return this.id;
-  }
+    public UUID toUUID()
+    {
+        return id;
+    }
 }

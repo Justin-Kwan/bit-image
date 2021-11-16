@@ -10,108 +10,109 @@ import com.amazonaws.services.rekognition.AmazonRekognitionClient;
 import com.amazonaws.services.rekognition.model.Attribute;
 import com.amazonaws.services.rekognition.model.Celebrity;
 import com.amazonaws.services.rekognition.model.DetectFacesRequest;
-import com.amazonaws.services.rekognition.model.DetectFacesResult;
 import com.amazonaws.services.rekognition.model.DetectLabelsRequest;
 import com.amazonaws.services.rekognition.model.DetectModerationLabelsRequest;
-import com.amazonaws.services.rekognition.model.DetectModerationLabelsResult;
 import com.amazonaws.services.rekognition.model.DetectTextRequest;
 import com.amazonaws.services.rekognition.model.FaceDetail;
 import com.amazonaws.services.rekognition.model.Image;
 import com.amazonaws.services.rekognition.model.Label;
 import com.amazonaws.services.rekognition.model.ModerationLabel;
 import com.amazonaws.services.rekognition.model.RecognizeCelebritiesRequest;
-import com.amazonaws.services.rekognition.model.RecognizeCelebritiesResult;
 import com.amazonaws.services.rekognition.model.S3Object;
 import com.amazonaws.services.rekognition.model.TextDetection;
+
 import java.util.List;
 
-public class AwsImageClassifier {
+public class AwsImageClassifier
+{
+    private static final int MAX_LABELS_GENERATED = 20;
+    private static final float MIN_LABEL_CONFIDENCE_SCORE = 70F;
 
-  private final AmazonRekognition rekognitionClient;
-  private final IExceptionTranslator<AmazonServiceException, RuntimeException>
-      awsExceptionTranslator;
+    private final AmazonRekognition rekognitionClient;
+    private final IExceptionTranslator<AmazonServiceException, RuntimeException>
+            awsExceptionTranslator;
 
-  private final int MAX_LABELS_GENERATED = 20;
-  private final float MIN_LABEL_CONFIDENCE_SCORE = 70F;
+    public AwsImageClassifier(
+            AmazonRekognition rekognitionClient,
+            IExceptionTranslator<AmazonServiceException, RuntimeException> awsExceptionTranslator)
+    {
+        this.rekognitionClient = rekognitionClient;
+        this.awsExceptionTranslator = awsExceptionTranslator;
+    }
 
-  public AwsImageClassifier(
-      AmazonRekognition rekognitionClient,
-      IExceptionTranslator<AmazonServiceException, RuntimeException> awsExceptionTranslator) {
-    this.rekognitionClient = rekognitionClient;
-    this.awsExceptionTranslator = awsExceptionTranslator;
-  }
+    public static AwsImageClassifier CreateNew(
+            IAwsEnv env,
+            IExceptionTranslator<AmazonServiceException, RuntimeException> awsExceptionTranslator)
+    {
+        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(
+                env.getAwsAccessID(),
+                env.getAwsAccessKey());
 
-  public static AwsImageClassifier CreateNew(
-      IAwsEnv env,
-      IExceptionTranslator<AmazonServiceException, RuntimeException> awsExceptionTranslator) {
-    final var awsCredentials = new BasicAWSCredentials(env.getAwsAccessID(), env.getAwsAccessKey());
-    final var rekognitionClient = new AmazonRekognitionClient(awsCredentials);
+        return new AwsImageClassifier(
+                new AmazonRekognitionClient(awsCredentials),
+                awsExceptionTranslator);
+    }
 
-    final var awsImageClassifier =
-        new AwsImageClassifier(rekognitionClient, awsExceptionTranslator);
+    public List<Label> detectObjectsInImage(String fileID, String folderName)
+    {
+        DetectLabelsRequest request = new DetectLabelsRequest()
+                        .withImage(newRekognitionImage(fileID, folderName))
+                        .withMaxLabels(MAX_LABELS_GENERATED)
+                        .withMinConfidence(MIN_LABEL_CONFIDENCE_SCORE);
 
-    return awsImageClassifier;
-  }
+        return rekognitionClient
+                .detectLabels(request)
+                .getLabels();
+    }
 
-  public List<Label> detectObjectsInImage(String fileID, String folderName) {
-    final var request =
-        new DetectLabelsRequest()
-            .withImage(this.newRekognitionImage(fileID, folderName))
-            .withMaxLabels(this.MAX_LABELS_GENERATED)
-            .withMinConfidence(this.MIN_LABEL_CONFIDENCE_SCORE);
+    public List<TextDetection> detectTextInImage(String fileID, String folderName)
+    {
+        DetectTextRequest request = new DetectTextRequest()
+                .withImage(newRekognitionImage(fileID, folderName));
 
-    final List<Label> detectedLabels = this.rekognitionClient.detectLabels(request).getLabels();
+        return rekognitionClient
+                .detectText(request)
+                .getTextDetections();
+    }
 
-    return detectedLabels;
-  }
+    public List<FaceDetail> detectFacesInImage(String fileID, String folderName)
+    {
+        DetectFacesRequest request = new DetectFacesRequest()
+                .withImage(newRekognitionImage(fileID, folderName))
+                .withAttributes(Attribute.ALL);
 
-  public List<TextDetection> detectTextInImage(String fileID, String folderName) {
-    final var request =
-        new DetectTextRequest().withImage(this.newRekognitionImage(fileID, folderName));
+        return rekognitionClient
+                .detectFaces(request)
+                .getFaceDetails();
+    }
 
-    final List<TextDetection> detectedTexts =
-        this.rekognitionClient.detectText(request).getTextDetections();
+    public List<Celebrity> detectCelebritiesInImage(String fileID, String folderName)
+    {
+        RecognizeCelebritiesRequest request = new RecognizeCelebritiesRequest()
+                .withImage(newRekognitionImage(fileID, folderName));
 
-    return detectedTexts;
-  }
+        return rekognitionClient
+                .recognizeCelebrities(request)
+                .getCelebrityFaces();
+    }
 
-  public List<FaceDetail> detectFacesInImage(String fileID, String folderName) {
-    final var request =
-        new DetectFacesRequest()
-            .withImage(this.newRekognitionImage(fileID, folderName))
-            .withAttributes(Attribute.ALL);
+    public List<ModerationLabel> detectUnsafeContentInImage(String fileID, String folderName)
+    {
+        DetectModerationLabelsRequest request = new DetectModerationLabelsRequest()
+                .withImage(newRekognitionImage(fileID, folderName))
+                .withMinConfidence(MIN_LABEL_CONFIDENCE_SCORE);
 
-    DetectFacesResult result = this.rekognitionClient.detectFaces(request);
-    List<FaceDetail> detectedFaces = result.getFaceDetails();
+        return rekognitionClient
+                .detectModerationLabels(request)
+                .getModerationLabels();
+    }
 
-    return detectedFaces;
-  }
+    private Image newRekognitionImage(String fileID, String folderName)
+    {
+        S3Object s3Object = new S3Object()
+                .withName(fileID)
+                .withBucket(folderName);
 
-  public List<Celebrity> detectCelebritiesInImage(String fileID, String folderName) {
-    final var request =
-        new RecognizeCelebritiesRequest().withImage(this.newRekognitionImage(fileID, folderName));
-
-    RecognizeCelebritiesResult result = this.rekognitionClient.recognizeCelebrities(request);
-    List<Celebrity> detectedCelebrities = result.getCelebrityFaces();
-
-    return detectedCelebrities;
-  }
-
-  public List<ModerationLabel> detectUnsafeContentInImage(String fileID, String folderName) {
-    final var request =
-        new DetectModerationLabelsRequest()
-            .withImage(this.newRekognitionImage(fileID, folderName))
-            .withMinConfidence(this.MIN_LABEL_CONFIDENCE_SCORE);
-
-    DetectModerationLabelsResult result = this.rekognitionClient.detectModerationLabels(request);
-    List<ModerationLabel> detectedUnsafeContents = result.getModerationLabels();
-
-    return detectedUnsafeContents;
-  }
-
-  private Image newRekognitionImage(String fileID, String folderName) {
-    final var s3Object = new S3Object().withName(fileID).withBucket(folderName);
-
-    return new Image().withS3Object(s3Object);
-  }
+        return new Image().withS3Object(s3Object);
+    }
 }

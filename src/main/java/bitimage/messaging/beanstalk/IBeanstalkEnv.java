@@ -1,13 +1,14 @@
 package bitimage.messaging.beanstalk;
 
-public interface IBeanstalkEnv {
-  public String getBeanstalkHost();
+public interface IBeanstalkEnv
+{
+    String getBeanstalkHost();
 
-  public String getBeanstalkQueueName();
+    String getBeanstalkQueueName();
 
-  public int getBeanstalkPort();
+    int getBeanstalkPort();
 
-  public int getBeanstalkReadTimeout();
+    int getBeanstalkReadTimeout();
 
-  public int getBeanstalkConnectTimeout();
+    int getBeanstalkConnectTimeout();
 }

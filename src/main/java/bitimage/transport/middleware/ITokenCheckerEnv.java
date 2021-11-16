@@ -1,7 +1,8 @@
 package bitimage.transport.middleware;
 
-public interface ITokenCheckerEnv {
-  public String getRemoteTokenCheckerHostPort();
+public interface ITokenCheckerEnv
+{
+    String getRemoteTokenCheckerHostPort();
 
-  public String getRemoteTokenCheckerRequestMediaType();
+    String getRemoteTokenCheckerRequestMediaType();
 }

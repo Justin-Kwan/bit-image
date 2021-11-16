@@ -2,93 +2,115 @@ package bitimage.transport.middleware;
 
 import bitimage.regexp.RegexPatterns;
 import bitimage.transport.exceptions.UnauthorizedException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.http.HttpHeaders;
-import java.io.IOException;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class RemoteTokenChecker implements ITokenChecker<HttpHeaders> {
+import java.io.IOException;
+import java.util.Objects;
 
-  private static final String REQUEST_TOKEN_BODY = "{ \"token\": \"%s\" }";
-  private static final String RESPONSE_USER_ID = "user_id";
-  private static final String RESPONSE_IS_USER_AUTHORIZED = "is_user_authorized";
+public class RemoteTokenChecker
+        implements ITokenChecker<HttpHeaders>
+{
+    private static final String REQUEST_TOKEN_BODY = "{ \"token\": \"%s\" }";
+    private static final String RESPONSE_USER_ID = "user_id";
+    private static final String RESPONSE_IS_USER_AUTHORIZED = "is_user_authorized";
 
-  private final String remoteApiHostPort;
-  private final String remoteApiMediaType;
+    private static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
-  public RemoteTokenChecker(ITokenCheckerEnv env) {
-    this.remoteApiHostPort = env.getRemoteTokenCheckerHostPort();
-    this.remoteApiMediaType = env.getRemoteTokenCheckerRequestMediaType();
-  }
+    private final String remoteApiHostPort;
+    private final String remoteApiMediaType;
 
-  /** Calls remote CAS auth service to verify token is valid, then returns user id of token. */
-  public String doAuthCheck(HttpHeaders headers) throws Exception {
-    try {
-      return this.doTokenCheck(headers);
-    } catch (Exception e) {
-      throw new UnauthorizedException();
-    }
-  }
-
-  private String doTokenCheck(HttpHeaders headers) throws Exception {
-    this.assertHeadersContainToken(headers);
-
-    final String authToken = headers.getAuthorization().get();
-    final RequestBody tokenCheckRequest = this.getTokenCheckRequestBody(authToken);
-    final String tokenCheckResponse = this.fetchAuthCheck(tokenCheckRequest);
-
-    if (!this.isUserAuthorized(tokenCheckResponse)) {
-      throw new UnauthorizedException();
+    public RemoteTokenChecker(ITokenCheckerEnv env)
+    {
+        this.remoteApiHostPort = env.getRemoteTokenCheckerHostPort();
+        this.remoteApiMediaType = env.getRemoteTokenCheckerRequestMediaType();
     }
 
-    return this.getTokenUserID(tokenCheckResponse);
-  }
-
-  private void assertHeadersContainToken(HttpHeaders headers) {
-    if (!headers.contains(HttpHeaders.AUTHORIZATION)) {
-      throw new UnauthorizedException();
+    /**
+     * Calls remote CAS auth service to verify token
+     * is valid, then returns user id of token.
+     */
+    public String doAuthCheck(HttpHeaders headers)
+            throws UnauthorizedException
+    {
+        try {
+            return doTokenCheck(headers);
+        }
+        catch (Exception e) {
+            throw new UnauthorizedException();
+        }
     }
-  }
 
-  private RequestBody getTokenCheckRequestBody(String authToken) {
-    final MediaType requestMediaType = MediaType.get(remoteApiMediaType);
+    private String doTokenCheck(HttpHeaders headers)
+            throws UnauthorizedException, IOException
+    {
+        assertHeadersContainToken(headers);
 
-    // "Bearer token..." -> "token..."
-    final var cleanedAuthToken = authToken.split(RegexPatterns.SPACE)[1];
+        String authToken = headers.getAuthorization().get();
+        RequestBody tokenCheckRequest = getTokenCheckRequestBody(authToken);
+        String tokenCheckResponse = fetchAuthCheck(tokenCheckRequest);
 
-    final RequestBody tokenCheckRequest =
-        RequestBody.create(requestMediaType, REQUEST_TOKEN_BODY.formatted(cleanedAuthToken));
+        if (!isUserAuthorized(tokenCheckResponse)) {
+            throw new UnauthorizedException();
+        }
 
-    return tokenCheckRequest;
-  }
+        return getTokenUserID(tokenCheckResponse);
+    }
 
-  private String fetchAuthCheck(RequestBody tokenCheckRequest) throws Exception {
-    final var client = new OkHttpClient();
+    private static void assertHeadersContainToken(HttpHeaders headers)
+    {
+        if (!headers.contains(HttpHeaders.AUTHORIZATION)) {
+            throw new UnauthorizedException();
+        }
+    }
 
-    final var req = new Request.Builder().url(remoteApiHostPort).post(tokenCheckRequest).build();
-    final String res = client.newCall(req).execute().body().string();
+    private RequestBody getTokenCheckRequestBody(String authToken)
+    {
+        MediaType requestMediaType = MediaType.get(remoteApiMediaType);
+        // "Bearer token..." -> "token..."
+        String cleanedAuthToken = authToken.split(RegexPatterns.SPACE)[1];
 
-    return res;
-  }
+        return RequestBody.create(
+                requestMediaType,
+                String.format(REQUEST_TOKEN_BODY, cleanedAuthToken));
+    }
 
-  private boolean isUserAuthorized(String tokenCheckResponse) throws IOException {
-    final var jsonMapper = new ObjectMapper();
+    private String fetchAuthCheck(RequestBody tokenCheckRequest)
+            throws IOException
+    {
+        Request req = new Request.Builder()
+                .url(remoteApiHostPort)
+                .post(tokenCheckRequest)
+                .build();
 
-    final boolean isUserAuthorized =
-        jsonMapper.readTree(tokenCheckResponse).get(RESPONSE_IS_USER_AUTHORIZED).booleanValue();
+        return Objects.requireNonNull(
+                HTTP_CLIENT
+                        .newCall(req)
+                        .execute()
+                        .body())
+                .string();
+    }
 
-    return isUserAuthorized;
-  }
+    private static boolean isUserAuthorized(String tokenCheckResponse)
+            throws IOException
+    {
+        return JSON_MAPPER
+                .readTree(tokenCheckResponse)
+                .get(RESPONSE_IS_USER_AUTHORIZED)
+                .booleanValue();
+    }
 
-  private String getTokenUserID(String tokenCheckResponse) throws IOException {
-    final var jsonMapper = new ObjectMapper();
-
-    final String userID = jsonMapper.readTree(tokenCheckResponse).get(RESPONSE_USER_ID).textValue();
-
-    return userID;
-  }
+    private static String getTokenUserID(String tokenCheckResponse)
+            throws IOException
+    {
+        return JSON_MAPPER
+                .readTree(tokenCheckResponse)
+                .get(RESPONSE_USER_ID)
+                .textValue();
+    }
 }

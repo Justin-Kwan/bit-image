@@ -8,32 +8,37 @@ import bitimage.storage.mappers.UserStoreMapper;
 import bitimage.storage.postgres.dao.DAOFactory;
 import bitimage.storage.postgres.dao.UserDAO;
 
-public class UserStore implements IUserStore {
+public class UserStore
+        implements IUserStore
+{
+    private final DAOFactory daoFactory;
+    private final UserStoreMapper mapper;
 
-  private final DAOFactory daoFactory;
-  private final UserStoreMapper mapper;
+    public UserStore(DAOFactory daoFactory, UserStoreMapper mapper)
+    {
+        this.daoFactory = daoFactory;
+        this.mapper = mapper;
+    }
 
-  public UserStore(DAOFactory daoFactory, UserStoreMapper mapper) {
-    this.daoFactory = daoFactory;
-    this.mapper = mapper;
-  }
+    public void addUser(User user)
+            throws Exception
+    {
+        UserDTO userDTO = mapper.mapToUserDTO(user);
+        UserDAO userDAO = daoFactory.getUserDAO();
+        userDAO.insertUser(userDTO);
+    }
 
-  public void addUser(User user) throws Exception {
-    final UserDAO userDAO = this.daoFactory.getUserDAO();
-    final UserDTO userDTO = this.mapper.mapToUserDTO(user);
+    public void deleteUserByID(EntityID userID)
+            throws Exception
+    {
+        UserDAO userDAO = daoFactory.getUserDAO();
+        userDAO.deleteUserByID(userID.toUUID());
+    }
 
-    userDAO.insertUser(userDTO);
-  }
-
-  public void deleteUserByID(EntityID userID) throws Exception {
-    final UserDAO userDAO = this.daoFactory.getUserDAO();
-
-    userDAO.deleteUserByID(userID.toUUID());
-  }
-
-  public boolean doesUserExist(EntityID userID) throws Exception {
-    final UserDAO userDAO = this.daoFactory.getUserDAO();
-
-    return userDAO.doesUserExist(userID.toUUID());
-  }
+    public boolean doesUserExist(EntityID userID)
+            throws Exception
+    {
+        UserDAO userDAO = daoFactory.getUserDAO();
+        return userDAO.doesUserExist(userID.toUUID());
+    }
 }

@@ -227,7 +227,7 @@ Example Request
 curl 'http://198.199.78.73:5000/loginSubmit' \
 	-X POST \
 	-H "Content-type: application/json" \
-	-d '{ "email" : "shopify@email.com", "password" : "ecommerce_2021" }'
+	-d '{ "email" : "user@email.com", "password" : "password_2021" }'
 ```
 
 Example Response

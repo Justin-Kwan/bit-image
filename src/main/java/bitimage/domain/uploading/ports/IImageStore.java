@@ -4,29 +4,39 @@ import bitimage.domain.common.entities.EntityID;
 import bitimage.domain.common.entities.Image;
 import bitimage.domain.uploading.entities.FileUrl;
 import bitimage.domain.uploading.entities.ImageMetadata;
+
 import java.util.List;
 
-public interface IImageStore {
-  public List<Image> addImages(List<Image> images) throws Exception;
+public interface IImageStore
+{
+    List<Image> addImages(List<Image> images)
+            throws Exception;
 
-  public List<Image> getAllPublicImages() throws Exception;
+    List<Image> getAllPublicImages()
+            throws Exception;
 
-  public List<Image> getAllUserImages(EntityID userID) throws Exception;
+    List<Image> getAllUserImages(EntityID userID)
+            throws Exception;
 
-  public List<Image> getImagesByName(EntityID userID, String imageName) throws Exception;
+    List<Image> getImagesByName(EntityID userID, String imageName)
+            throws Exception;
 
-  public List<Image> getImagesByTag(EntityID userID, String tagName) throws Exception;
+    List<Image> getImagesByTag(EntityID userID, String tagName)
+            throws Exception;
 
-  public List<Image> getImagesByContentLabel(EntityID userID, String contentLabelName)
-      throws Exception;
+    List<Image> getImagesByContentLabel(EntityID userID, String contentLabelName)
+            throws Exception;
 
-  public Image getImageByID(EntityID userID, EntityID imageID) throws Exception;
+    Image getImageByID(EntityID userID, EntityID imageID)
+            throws Exception;
 
-  public void deleteImages(EntityID userID, List<EntityID> imageIDs) throws Exception;
+    void deleteImages(EntityID userID, List<EntityID> imageIDs)
+            throws Exception;
 
-  public void deleteAllUserImages(EntityID userID) throws Exception;
+    void deleteAllUserImages(EntityID userID)
+            throws Exception;
 
-  public FileUrl generateImageUploadUrl(EntityID uploaderUserID);
+    FileUrl generateImageUploadUrl(EntityID uploaderUserID);
 
-  public ImageMetadata getReceivedImageMetadata(EntityID userID, EntityID imageID);
+    ImageMetadata getReceivedImageMetadata(EntityID userID, EntityID imageID);
 }

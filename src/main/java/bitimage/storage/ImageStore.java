@@ -13,166 +13,185 @@ import bitimage.storage.dto.ImageDTO;
 import bitimage.storage.mappers.ImageStoreMapper;
 import bitimage.storage.postgres.dao.DAOFactory;
 import bitimage.storage.postgres.dao.ImageDAO;
-import bitimage.storage.s3.S3Constants;
 import bitimage.storage.s3.IFileSystem;
+import bitimage.storage.s3.S3Constants;
 
 import java.util.List;
 
-public class ImageStore implements IImageStore {
+public class ImageStore
+        implements IImageStore
+{
+    private final DAOFactory daoFactory;
+    private final IFileSystem fileSystem;
+    private final ImageStoreMapper mapper;
 
-  private final DAOFactory daoFactory;
-  private final IFileSystem fileSystem;
-  private final ImageStoreMapper mapper;
-
-  public ImageStore(DAOFactory daoFactory, IFileSystem fileSystem, ImageStoreMapper mapper) {
-    this.daoFactory = daoFactory;
-    this.fileSystem = fileSystem;
-    this.mapper = mapper;
-  }
-
-  public FileUrl generateImageUploadUrl(EntityID userID) {
-    final var newImageID = EntityID.CreateNew();
-    String newFileID = this.mapper.mapToFileID(userID, newImageID);
-
-    final String imageUploadUrl =
-        this.fileSystem.generateFileUploadUrl(newFileID, S3Constants.TEMPORARY_STORAGE_FOLDER);
-
-    return new FileUrl(imageUploadUrl, newImageID);
-  }
-
-  public ImageMetadata getReceivedImageMetadata(EntityID userID, EntityID imageID) {
-    final String fileID = this.mapper.mapToFileID(userID, imageID);
-
-    final FileMetadataDTO fileMetadataDTO =
-        this.fileSystem.getFileMetadata(fileID, S3Constants.TEMPORARY_STORAGE_FOLDER);
-
-    if (fileMetadataDTO.isNull()) {
-      return new NullImageMetadata();
+    public ImageStore(DAOFactory daoFactory, IFileSystem fileSystem, ImageStoreMapper mapper)
+    {
+        this.daoFactory = daoFactory;
+        this.fileSystem = fileSystem;
+        this.mapper = mapper;
     }
 
-    final ImageMetadata imageMetadata = this.mapper.mapToImageMetadata(imageID, fileMetadataDTO);
+    public FileUrl generateImageUploadUrl(EntityID userID)
+    {
+        EntityID newImageID = EntityID.CreateNew();
+        String newFileID = mapper.mapToFileID(userID, newImageID);
 
-    return imageMetadata;
-  }
+        String imageUploadUrl = fileSystem.generateFileUploadUrl(
+                newFileID,
+                S3Constants.TEMPORARY_STORAGE_FOLDER);
 
-  public List<Image> addImages(List<Image> images) throws Exception {
-    final List<FileDTO> fileDTOs = this.mapper.mapToFileDTOs(images);
-
-    // first move received images into permanent storage folder
-    this.fileSystem.moveFilesToFolder(
-        fileDTOs, S3Constants.TEMPORARY_STORAGE_FOLDER, S3Constants.PERMANENT_STORAGE_FOLDER);
-
-    // then store image data in rdbms
-    final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-    final List<ImageDTO> imageDTOs = this.mapper.mapToImageDTOs(images);
-
-    imageDAO.insertImages(imageDTOs);
-    images.parallelStream().forEach(this::hydrateWithViewUrl);
-
-    return images;
-  }
-
-  public List<Image> getAllPublicImages() throws Exception {
-    final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-    final List<ImageDTO> imageDTOs = imageDAO.selectAllPublicImages();
-
-    final List<Image> images = this.mapper.mapToImages(imageDTOs);
-    images.parallelStream().forEach(this::hydrateWithViewUrl);
-
-    return images;
-  }
-
-  public List<Image> getAllUserImages(EntityID userID) throws Exception {
-    final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-    final List<ImageDTO> imageDTOs = imageDAO.selectAllUserImages(userID.toUUID());
-
-    final List<Image> images = this.mapper.mapToImages(imageDTOs);
-    images.parallelStream().forEach(this::hydrateWithViewUrl);
-
-    return images;
-  }
-
-  /**
-   * Gets all image entities similar to provided image name, which belong to the provided user id.
-   *
-   * <p>Retrieves all image metadata from RDBMS and generates a view url for each image (pointing to
-   * AWS S3 bucket).
-   */
-  public List<Image> getImagesByName(EntityID userID, String imageName) throws Exception {
-    final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-    final List<ImageDTO> imageDTOs = imageDAO.selectImagesByName(userID.toUUID(), imageName);
-
-    final List<Image> images = this.mapper.mapToImages(imageDTOs);
-    images.parallelStream().forEach(this::hydrateWithViewUrl);
-
-    return images;
-  }
-
-  public List<Image> getImagesByTag(EntityID userID, String tagName) throws Exception {
-    final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-    final List<ImageDTO> imageDTOs = imageDAO.selectImagesByTag(userID.toUUID(), tagName);
-
-    final List<Image> images = this.mapper.mapToImages(imageDTOs);
-    images.parallelStream().forEach(this::hydrateWithViewUrl);
-
-    return images;
-  }
-
-  public List<Image> getImagesByContentLabel(EntityID userID, String labelName) throws Exception {
-    final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-
-    final List<ImageDTO> imageDTOs =
-        imageDAO.selectImagesByContentLabel(userID.toUUID(), labelName);
-
-    final List<Image> images = this.mapper.mapToImages(imageDTOs);
-    images.parallelStream().forEach(this::hydrateWithViewUrl);
-
-    return images;
-  }
-
-  public Image getImageByID(EntityID userID, EntityID imageID) throws Exception {
-    final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-    final ImageDTO imageDTO = imageDAO.selectImageByID(userID.toUUID(), imageID.toUUID());
-
-    if (imageDTO.isNull()) {
-      return new NullImage();
+        return new FileUrl(imageUploadUrl, newImageID);
     }
 
-    final Image image = this.mapper.mapToImage(imageDTO);
-    this.hydrateWithViewUrl(image);
+    public ImageMetadata getReceivedImageMetadata(EntityID userID, EntityID imageID)
+    {
+        FileMetadataDTO fileMetadataDTO = fileSystem.getFileMetadata(
+                mapper.mapToFileID(userID, imageID),
+                S3Constants.TEMPORARY_STORAGE_FOLDER);
 
-    return image;
-  }
+        if (fileMetadataDTO.isNull()) {
+            return new NullImageMetadata();
+        }
 
-  private Image hydrateWithViewUrl(Image image) {
-    final String fileID = this.mapper.mapToFileID(image.getUserID(), image.getID());
+        return mapper.mapToImageMetadata(imageID, fileMetadataDTO);
+    }
 
-    final String imageViewUrl =
-        this.fileSystem.generateFileViewUrl(fileID, S3Constants.PERMANENT_STORAGE_FOLDER);
+    public List<Image> addImages(List<Image> images)
+            throws Exception
+    {
+        List<FileDTO> fileDTOs = mapper.mapToFileDTOs(images);
 
-    final var viewUrl = new FileUrl(imageViewUrl, image.getID());
-    image.setViewUrl(viewUrl);
+        // first move received images into permanent storage folder
+        fileSystem.moveFilesToFolder(
+                fileDTOs,
+                S3Constants.TEMPORARY_STORAGE_FOLDER,
+                S3Constants.PERMANENT_STORAGE_FOLDER);
 
-    return image;
-  }
+        // then store image data in rdbms
+        ImageDAO imageDAO = daoFactory.getImageDAO();
+        List<ImageDTO> imageDTOs = mapper.mapToImageDTOs(images);
 
-  public void deleteImages(EntityID userID, List<EntityID> imageIDs) throws Exception {
-    final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-    imageDAO.deleteImagesByID(userID.toUUID(), this.mapper.mapToUUIDs(imageIDs));
+        imageDAO.insertImages(imageDTOs);
+        images.parallelStream().forEach(this::hydrateWithViewUrl);
 
-    final List<String> fileIDsToDelete = this.mapper.mapToFileIDs(userID, imageIDs);
+        return images;
+    }
 
-    this.fileSystem.deleteFilesFromFolder(fileIDsToDelete, S3Constants.PERMANENT_STORAGE_FOLDER);
-  }
+    public List<Image> getAllPublicImages()
+            throws Exception
+    {
+        ImageDAO imageDAO = daoFactory.getImageDAO();
+        List<ImageDTO> imageDTOs = imageDAO.selectAllPublicImages();
 
-  public void deleteAllUserImages(EntityID userID) throws Exception {
-    final ImageDAO imageDAO = this.daoFactory.getImageDAO();
-    imageDAO.deleteImagesByUserID(userID.toUUID());
+        List<Image> images = mapper.mapToImages(imageDTOs);
+        images.parallelStream().forEach(this::hydrateWithViewUrl);
 
-    final String filePrefix = "users/%s/".formatted(userID.toString());
-    final List<String> fileIDsToDelete =
-        this.fileSystem.lookupFileIDsByPrefix(filePrefix, S3Constants.PERMANENT_STORAGE_FOLDER);
+        return images;
+    }
 
-    this.fileSystem.deleteFilesFromFolder(fileIDsToDelete, S3Constants.PERMANENT_STORAGE_FOLDER);
-  }
+    public List<Image> getAllUserImages(EntityID userID)
+            throws Exception
+    {
+        ImageDAO imageDAO = daoFactory.getImageDAO();
+        List<ImageDTO> imageDTOs = imageDAO.selectAllUserImages(userID.toUUID());
+
+        List<Image> images = mapper.mapToImages(imageDTOs);
+        images.parallelStream().forEach(this::hydrateWithViewUrl);
+
+        return images;
+    }
+
+    /**
+     * Gets all image entities similar to provided image name, which belong to the provided user id.
+     *
+     * <p>Retrieves all image metadata from RDBMS and generates a view url for each image (pointing to
+     * AWS S3 bucket).
+     */
+    public List<Image> getImagesByName(EntityID userID, String imageName)
+            throws Exception
+    {
+        ImageDAO imageDAO = daoFactory.getImageDAO();
+        List<ImageDTO> imageDTOs = imageDAO.selectImagesByName(userID.toUUID(), imageName);
+
+        List<Image> images = mapper.mapToImages(imageDTOs);
+        images.parallelStream().forEach(this::hydrateWithViewUrl);
+
+        return images;
+    }
+
+    public List<Image> getImagesByTag(EntityID userID, String tagName)
+            throws Exception
+    {
+        ImageDAO imageDAO = daoFactory.getImageDAO();
+        List<ImageDTO> imageDTOs = imageDAO.selectImagesByTag(userID.toUUID(), tagName);
+
+        List<Image> images = mapper.mapToImages(imageDTOs);
+        images.parallelStream().forEach(this::hydrateWithViewUrl);
+
+        return images;
+    }
+
+    public List<Image> getImagesByContentLabel(EntityID userID, String labelName)
+            throws Exception
+    {
+        ImageDAO imageDAO = daoFactory.getImageDAO();
+        List<ImageDTO> imageDTOs = imageDAO.selectImagesByContentLabel(userID.toUUID(), labelName);
+
+        List<Image> images = mapper.mapToImages(imageDTOs);
+        images.parallelStream().forEach(this::hydrateWithViewUrl);
+
+        return images;
+    }
+
+    public Image getImageByID(EntityID userID, EntityID imageID)
+            throws Exception
+    {
+        ImageDAO imageDAO = daoFactory.getImageDAO();
+        ImageDTO imageDTO = imageDAO.selectImageByID(userID.toUUID(), imageID.toUUID());
+
+        if (imageDTO.isNull()) {
+            return new NullImage();
+        }
+
+        Image image = mapper.mapToImage(imageDTO);
+        hydrateWithViewUrl(image);
+
+        return image;
+    }
+
+    private void hydrateWithViewUrl(Image image)
+    {
+        String fileID = mapper.mapToFileID(image.getUserID(), image.getID());
+        String imageViewUrl = fileSystem.generateFileViewUrl(
+                fileID,
+                S3Constants.PERMANENT_STORAGE_FOLDER);
+
+        image.setViewUrl(new FileUrl(imageViewUrl, image.getID()));
+    }
+
+    public void deleteImages(EntityID userID, List<EntityID> imageIDs)
+            throws Exception
+    {
+        ImageDAO imageDAO = daoFactory.getImageDAO();
+        imageDAO.deleteImagesByID(userID.toUUID(), mapper.mapToUUIDs(imageIDs));
+
+        List<String> fileIDsToDelete = mapper.mapToFileIDs(userID, imageIDs);
+
+        fileSystem.deleteFilesFromFolder(fileIDsToDelete, S3Constants.PERMANENT_STORAGE_FOLDER);
+    }
+
+    public void deleteAllUserImages(EntityID userID)
+            throws Exception
+    {
+        ImageDAO imageDAO = daoFactory.getImageDAO();
+        imageDAO.deleteImagesByUserID(userID.toUUID());
+
+        // delete images by user id prefix
+        List<String> fileIDsToDelete = fileSystem.lookupFileIDsByPrefix(
+                String.format("users/%s/", userID),
+                S3Constants.PERMANENT_STORAGE_FOLDER);
+
+        fileSystem.deleteFilesFromFolder(fileIDsToDelete, S3Constants.PERMANENT_STORAGE_FOLDER);
+    }
 }

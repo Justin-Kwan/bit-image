@@ -3,112 +3,135 @@ package bitimage.domain.common.entities;
 import bitimage.domain.uploading.entities.FileUrl;
 import bitimage.domain.uploading.entities.ImageMetadata;
 import bitimage.domain.uploading.entities.Tag;
-import java.util.Arrays;
+
+import java.util.Collections;
 import java.util.List;
 
-public class Image extends Entity {
+public class Image
+        extends Entity
+{
+    private FileUrl viewUrl;
+    private final String name;
+    private final EntityID userID;
 
-  private List<Tag> tags;
-  private FileUrl viewUrl;
-  private final String name;
-  private final EntityID userID;
-  private final boolean isPrivate;
-  private List<Label> contentLabels;
-  private final ImageMetadata metadata;
+    private final List<Tag> tags;
+    private final List<Label> contentLabels;
 
-  protected Image(Builder builder) {
-    super(builder.id);
+    private final boolean isPrivate;
+    private final ImageMetadata metadata;
 
-    this.name = builder.name;
-    this.userID = builder.userID;
-    this.isPrivate = builder.isPrivate;
-    this.tags = builder.tags;
-    this.viewUrl = builder.viewUrl;
-    this.metadata = builder.metadata;
-    this.contentLabels = builder.contentLabels;
-  }
+    protected Image(Builder builder)
+    {
+        super(builder.id);
 
-  public static class Builder {
+        this.viewUrl = builder.viewUrl;
+        this.name = builder.name;
+        this.userID = builder.userID;
 
-    public EntityID id;
-    public String name;
-    public EntityID userID;
-    public boolean isPrivate;
-    public List<Tag> tags;
-    public FileUrl viewUrl;
-    public ImageMetadata metadata;
-    private List<Label> contentLabels;
+        this.isPrivate = builder.isPrivate;
+        this.metadata = builder.metadata;
 
-    public Builder(EntityID id, String name, EntityID userID) {
-      this.id = id;
-      this.name = name;
-      this.userID = userID;
-      this.tags = Arrays.asList();
+        this.tags = List.copyOf(builder.tags);
+        this.contentLabels = List.copyOf(builder.contentLabels);
     }
 
-    public Builder withPrivacyStatus(boolean isPrivate) {
-      this.isPrivate = isPrivate;
-      return this;
+    public static class Builder
+    {
+        public EntityID id;
+        public String name;
+        public EntityID userID;
+        public boolean isPrivate;
+        public List<Tag> tags;
+        public FileUrl viewUrl;
+        public ImageMetadata metadata;
+        private List<Label> contentLabels;
+
+        public Builder(EntityID id, String name, EntityID userID)
+        {
+            this.id = id;
+            this.name = name;
+            this.userID = userID;
+            this.tags = Collections.emptyList();
+        }
+
+        public Builder withPrivacyStatus(boolean isPrivate)
+        {
+            this.isPrivate = isPrivate;
+            return this;
+        }
+
+        public Builder withTags(List<Tag> tags)
+        {
+            this.tags = tags;
+            return this;
+        }
+
+        public Builder withContentLabels(List<Label> contentLabels)
+        {
+            this.contentLabels = contentLabels;
+            return this;
+        }
+
+        public Builder withViewUrl(FileUrl viewUrl)
+        {
+            this.viewUrl = viewUrl;
+            return this;
+        }
+
+        public Builder withMetadata(ImageMetadata metadata)
+        {
+            this.metadata = metadata;
+            return this;
+        }
+
+        public Image build()
+        {
+            return new Image(this);
+        }
     }
 
-    public Builder withTags(List<Tag> tags) {
-      this.tags = tags;
-      return this;
+    public void setViewUrl(FileUrl viewUrl)
+    {
+        this.viewUrl = viewUrl;
     }
 
-    public Builder withContentLabels(List<Label> contentLabels) {
-      this.contentLabels = contentLabels;
-      return this;
+    public String getName()
+    {
+        return name;
     }
 
-    public Builder withViewUrl(FileUrl viewUrl) {
-      this.viewUrl = viewUrl;
-      return this;
+    public EntityID getUserID()
+    {
+        return userID;
     }
 
-    public Builder withMetadata(ImageMetadata metadata) {
-      this.metadata = metadata;
-      return this;
+    public List<Tag> getTags()
+    {
+        return tags;
     }
 
-    public Image build() {
-      return new Image(this);
+    public List<Label> getLabels()
+    {
+        return contentLabels;
     }
-  }
 
-  public void setViewUrl(FileUrl viewUrl) {
-    this.viewUrl = viewUrl;
-  }
+    public FileUrl getViewUrl()
+    {
+        return viewUrl;
+    }
 
-  public String getName() {
-    return this.name;
-  }
+    public ImageMetadata getMetadata()
+    {
+        return metadata;
+    }
 
-  public EntityID getUserID() {
-    return this.userID;
-  }
+    public boolean isPrivate()
+    {
+        return isPrivate;
+    }
 
-  public List<Tag> getTags() {
-    return this.tags;
-  }
-
-  public List<Label> getLabels() {
-    return this.contentLabels;
-  }
-
-  public FileUrl getViewUrl() {
-    return this.viewUrl;
-  }
-
-  public ImageMetadata getMetadata() {
-    return this.metadata;
-  }
-
-  public boolean isPrivate() {
-    return this.isPrivate;
-  }
-
-  public boolean isNull() {
-    return false;
-  }
+    public boolean isNull()
+    {
+        return false;
+    }
 }

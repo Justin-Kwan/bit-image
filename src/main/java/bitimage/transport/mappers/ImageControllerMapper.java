@@ -1,10 +1,10 @@
 package bitimage.transport.mappers;
 
-import bitimage.domain.common.entities.Image;
-import bitimage.domain.common.entities.Label;
-import bitimage.domain.uploading.commands.CreateImageCmd;
-import bitimage.domain.uploading.entities.FileUrl;
-import bitimage.domain.uploading.entities.Tag;
+import bitimage.shared.entities.Image;
+import bitimage.shared.entities.Label;
+import bitimage.uploading.commands.CreateImageCmd;
+import bitimage.uploading.entities.FileUrl;
+import bitimage.uploading.entities.Tag;
 import bitimage.transport.dto.ImageDTO;
 import bitimage.transport.dto.ImageUploadUrlDTO;
 import bitimage.transport.dto.ImageUploadUrlsDTO;

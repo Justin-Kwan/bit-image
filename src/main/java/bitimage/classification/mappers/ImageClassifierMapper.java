@@ -1,7 +1,7 @@
 package bitimage.classification.mappers;
 
-import bitimage.domain.common.entities.EntityID;
-import bitimage.domain.common.entities.Label;
+import bitimage.shared.entities.EntityID;
+import bitimage.shared.entities.Label;
 import com.amazonaws.services.rekognition.model.Celebrity;
 import com.amazonaws.services.rekognition.model.Emotion;
 import com.amazonaws.services.rekognition.model.FaceDetail;

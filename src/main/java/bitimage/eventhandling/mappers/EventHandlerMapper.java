@@ -1,6 +1,6 @@
 package bitimage.eventhandling.mappers;
 
-import bitimage.domain.analysis.commands.ExtractImageContentsCmd;
+import bitimage.analysis.commands.ExtractImageContentsCmd;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

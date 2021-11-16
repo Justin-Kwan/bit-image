@@ -1,7 +1,7 @@
 package bitimage.messaging;
 
-import bitimage.eventhandling.IEventHandler;
-import bitimage.messaging.beanstalk.IMessageQueue;
+import bitimage.eventhandling.EventHandler;
+import bitimage.messaging.beanstalk.MessageQueue;
 import bitimage.messaging.beanstalk.QueueMessage;
 
 import java.util.Map;
@@ -9,13 +9,13 @@ import java.util.concurrent.ExecutorService;
 
 public class MessageReader
 {
-    private final IMessageQueue queue;
-    private final Map<String, IEventHandler> messageHandlers;
+    private final MessageQueue queue;
+    private final Map<String, EventHandler> messageHandlers;
     private final ExecutorService workerPool;
 
     public MessageReader(
-            IMessageQueue queue,
-            Map<String, IEventHandler> messageHandlers,
+            MessageQueue queue,
+            Map<String, EventHandler> messageHandlers,
             ExecutorService workerPool)
     {
         this.queue = queue;
@@ -42,7 +42,7 @@ public class MessageReader
         }
     }
 
-    private void dispatchMessage(QueueMessage message, IEventHandler messageHandler)
+    private void dispatchMessage(QueueMessage message, EventHandler messageHandler)
     {
         workerPool.submit(() -> {
             try {

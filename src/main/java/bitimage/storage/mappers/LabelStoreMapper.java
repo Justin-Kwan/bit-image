@@ -1,6 +1,6 @@
 package bitimage.storage.mappers;
 
-import bitimage.domain.common.entities.Label;
+import bitimage.shared.entities.Label;
 import bitimage.storage.dto.LabelDTO;
 
 import java.sql.Timestamp;

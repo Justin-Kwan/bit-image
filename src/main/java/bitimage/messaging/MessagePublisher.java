@@ -1,8 +1,8 @@
 package bitimage.messaging;
 
-import bitimage.domain.common.events.IDomainEvent;
-import bitimage.domain.uploading.ports.IEventPublisher;
-import bitimage.messaging.beanstalk.IMessageQueue;
+import bitimage.shared.events.DomainEvent;
+import bitimage.uploading.ports.EventPublisher;
+import bitimage.messaging.beanstalk.MessageQueue;
 import bitimage.messaging.beanstalk.QueueMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -13,9 +13,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MessagePublisher
-        implements IEventPublisher
+        implements EventPublisher
 {
-    private final IMessageQueue queue;
+    private final MessageQueue queue;
     private final Map<String, String> eventToQueueLookup;
     private final Logger logger;
 
@@ -23,7 +23,7 @@ public class MessagePublisher
             .writer()
             .withDefaultPrettyPrinter();
 
-    public MessagePublisher(IMessageQueue queue, Map<String, String> eventToQueueLookup)
+    public MessagePublisher(MessageQueue queue, Map<String, String> eventToQueueLookup)
     {
         this.queue = queue;
         this.eventToQueueLookup = Map.copyOf(eventToQueueLookup);
@@ -37,7 +37,7 @@ public class MessagePublisher
      * ex. Newly uploaded images' data is serialized and
      * then sent to message queue for image analysis.
      */
-    public <T extends IDomainEvent> void publish(T event)
+    public <T extends DomainEvent> void publish(T event)
             throws Exception
     {
         String messageText = JSON_WRITER.writeValueAsString(event);

@@ -1,16 +1,16 @@
 package bitimage.transport.controllers;
 
-import bitimage.domain.common.entities.Image;
-import bitimage.domain.uploading.commands.CreateImageCmd;
-import bitimage.domain.uploading.entities.FileUrl;
-import bitimage.domain.uploading.services.ImageUploadService;
+import bitimage.shared.entities.Image;
+import bitimage.uploading.commands.CreateImageCmd;
+import bitimage.uploading.entities.FileUrl;
+import bitimage.uploading.services.ImageUploadService;
 import bitimage.regexp.RegexPatterns;
 import bitimage.transport.dto.ImageDTO;
 import bitimage.transport.dto.ImageUploadUrlsDTO;
 import bitimage.transport.dto.ImagesDTO;
 import bitimage.transport.dto.SearchImageDTO;
 import bitimage.transport.mappers.ImageControllerMapper;
-import bitimage.transport.middleware.ITokenChecker;
+import bitimage.transport.middleware.TokenChecker;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
@@ -44,7 +44,7 @@ public class ImageController
     public ImageController(
             ImageUploadService imageUploadService,
             ImageControllerMapper mapper,
-            ITokenChecker tokenChecker)
+            TokenChecker tokenChecker)
     {
         super(tokenChecker);
 

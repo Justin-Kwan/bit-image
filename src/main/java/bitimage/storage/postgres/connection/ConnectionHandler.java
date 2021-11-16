@@ -14,7 +14,7 @@ public class ConnectionHandler
         this.connectionPool = connectionPool;
     }
 
-    public static ConnectionHandler CreateNew(IPostgresEnv env)
+    public static ConnectionHandler CreateNew(PostgresEnv env)
     {
         BasicDataSource connectionPool = new BasicDataSource();
 

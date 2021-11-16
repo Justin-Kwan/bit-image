@@ -1,11 +1,11 @@
 package bitimage.storage.mappers;
 
-import bitimage.domain.common.entities.EntityID;
-import bitimage.domain.common.entities.Image;
-import bitimage.domain.common.entities.Label;
-import bitimage.domain.uploading.entities.FileSize;
-import bitimage.domain.uploading.entities.ImageMetadata;
-import bitimage.domain.uploading.entities.Tag;
+import bitimage.shared.entities.EntityID;
+import bitimage.shared.entities.Image;
+import bitimage.shared.entities.Label;
+import bitimage.uploading.entities.FileSize;
+import bitimage.uploading.entities.ImageMetadata;
+import bitimage.uploading.entities.Tag;
 import bitimage.storage.dto.FileDTO;
 import bitimage.storage.dto.FileMetadataDTO;
 import bitimage.storage.dto.ImageDTO;

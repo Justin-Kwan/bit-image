@@ -1,13 +1,13 @@
 package bitimage.eventhandling;
 
-import bitimage.domain.analysis.commands.ExtractImageContentsCmd;
-import bitimage.domain.analysis.services.ImageAnalysisService;
+import bitimage.analysis.commands.ExtractImageContentsCmd;
+import bitimage.analysis.services.ImageAnalysisService;
 import bitimage.eventhandling.mappers.EventHandlerMapper;
 
 import java.util.List;
 
 public class ImagesUploadedEventHandler
-        implements IEventHandler
+        implements EventHandler
 {
     private final EventHandlerMapper mapper;
     private final ImageAnalysisService service;

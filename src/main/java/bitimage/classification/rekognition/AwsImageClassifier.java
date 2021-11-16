@@ -1,7 +1,7 @@
 package bitimage.classification.rekognition;
 
-import bitimage.storage.exceptions.IExceptionTranslator;
-import bitimage.storage.s3.IAwsEnv;
+import bitimage.storage.exceptions.ExceptionTranslator;
+import bitimage.storage.s3.AwsEnv;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -29,20 +29,20 @@ public class AwsImageClassifier
     private static final float MIN_LABEL_CONFIDENCE_SCORE = 70F;
 
     private final AmazonRekognition rekognitionClient;
-    private final IExceptionTranslator<AmazonServiceException, RuntimeException>
+    private final ExceptionTranslator<AmazonServiceException, RuntimeException>
             awsExceptionTranslator;
 
     public AwsImageClassifier(
             AmazonRekognition rekognitionClient,
-            IExceptionTranslator<AmazonServiceException, RuntimeException> awsExceptionTranslator)
+            ExceptionTranslator<AmazonServiceException, RuntimeException> awsExceptionTranslator)
     {
         this.rekognitionClient = rekognitionClient;
         this.awsExceptionTranslator = awsExceptionTranslator;
     }
 
     public static AwsImageClassifier CreateNew(
-            IAwsEnv env,
-            IExceptionTranslator<AmazonServiceException, RuntimeException> awsExceptionTranslator)
+            AwsEnv env,
+            ExceptionTranslator<AmazonServiceException, RuntimeException> awsExceptionTranslator)
     {
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(
                 env.getAwsAccessID(),

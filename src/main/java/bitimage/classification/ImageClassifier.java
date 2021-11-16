@@ -2,9 +2,8 @@ package bitimage.classification;
 
 import bitimage.classification.mappers.ImageClassifierMapper;
 import bitimage.classification.rekognition.AwsImageClassifier;
-import bitimage.domain.analysis.ports.IImageClassifier;
-import bitimage.domain.common.entities.Image;
-import bitimage.domain.common.entities.Label;
+import bitimage.shared.entities.Image;
+import bitimage.shared.entities.Label;
 import bitimage.storage.s3.S3Constants;
 
 import com.amazonaws.services.rekognition.model.Celebrity;
@@ -15,7 +14,7 @@ import com.amazonaws.services.rekognition.model.TextDetection;
 import java.util.List;
 
 public class ImageClassifier
-        implements IImageClassifier
+        implements bitimage.analysis.ports.ImageClassifier
 {
     private final AwsImageClassifier awsImageClassifier;
     private final ImageClassifierMapper mapper;

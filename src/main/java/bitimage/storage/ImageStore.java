@@ -1,31 +1,30 @@
 package bitimage.storage;
 
-import bitimage.domain.common.entities.EntityID;
-import bitimage.domain.common.entities.Image;
-import bitimage.domain.common.entities.NullImage;
-import bitimage.domain.uploading.entities.FileUrl;
-import bitimage.domain.uploading.entities.ImageMetadata;
-import bitimage.domain.uploading.entities.NullImageMetadata;
-import bitimage.domain.uploading.ports.IImageStore;
+import bitimage.shared.entities.EntityID;
+import bitimage.shared.entities.Image;
+import bitimage.shared.entities.NullImage;
+import bitimage.uploading.entities.FileUrl;
+import bitimage.uploading.entities.ImageMetadata;
+import bitimage.uploading.entities.NullImageMetadata;
 import bitimage.storage.dto.FileDTO;
 import bitimage.storage.dto.FileMetadataDTO;
 import bitimage.storage.dto.ImageDTO;
 import bitimage.storage.mappers.ImageStoreMapper;
 import bitimage.storage.postgres.dao.DAOFactory;
 import bitimage.storage.postgres.dao.ImageDAO;
-import bitimage.storage.s3.IFileSystem;
+import bitimage.storage.s3.FileSystem;
 import bitimage.storage.s3.S3Constants;
 
 import java.util.List;
 
 public class ImageStore
-        implements IImageStore
+        implements bitimage.uploading.ports.ImageStore
 {
     private final DAOFactory daoFactory;
-    private final IFileSystem fileSystem;
+    private final FileSystem fileSystem;
     private final ImageStoreMapper mapper;
 
-    public ImageStore(DAOFactory daoFactory, IFileSystem fileSystem, ImageStoreMapper mapper)
+    public ImageStore(DAOFactory daoFactory, FileSystem fileSystem, ImageStoreMapper mapper)
     {
         this.daoFactory = daoFactory;
         this.fileSystem = fileSystem;

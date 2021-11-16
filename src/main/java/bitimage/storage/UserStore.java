@@ -1,15 +1,14 @@
 package bitimage.storage;
 
-import bitimage.domain.common.entities.EntityID;
-import bitimage.domain.uploading.entities.User;
-import bitimage.domain.uploading.ports.IUserStore;
+import bitimage.shared.entities.EntityID;
+import bitimage.uploading.entities.User;
 import bitimage.storage.dto.UserDTO;
 import bitimage.storage.mappers.UserStoreMapper;
 import bitimage.storage.postgres.dao.DAOFactory;
 import bitimage.storage.postgres.dao.UserDAO;
 
 public class UserStore
-        implements IUserStore
+        implements bitimage.uploading.ports.UserStore
 {
     private final DAOFactory daoFactory;
     private final UserStoreMapper mapper;

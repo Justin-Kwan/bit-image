@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class RemoteTokenChecker
-        implements ITokenChecker<HttpHeaders>
+        implements TokenChecker<HttpHeaders>
 {
     private static final String REQUEST_TOKEN_BODY = "{ \"token\": \"%s\" }";
     private static final String RESPONSE_USER_ID = "user_id";
@@ -25,7 +25,7 @@ public class RemoteTokenChecker
     private final String remoteApiHostPort;
     private final String remoteApiMediaType;
 
-    public RemoteTokenChecker(ITokenCheckerEnv env)
+    public RemoteTokenChecker(TokenCheckerEnv env)
     {
         this.remoteApiHostPort = env.getRemoteTokenCheckerHostPort();
         this.remoteApiMediaType = env.getRemoteTokenCheckerRequestMediaType();

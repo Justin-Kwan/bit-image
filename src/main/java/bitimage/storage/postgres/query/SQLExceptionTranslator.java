@@ -1,6 +1,6 @@
 package bitimage.storage.postgres.query;
 
-import bitimage.storage.exceptions.IExceptionTranslator;
+import bitimage.storage.exceptions.ExceptionTranslator;
 import bitimage.storage.exceptions.StorageObjectAlreadyExistsException;
 import bitimage.storage.exceptions.StorageObjectNotFoundException;
 import bitimage.storage.exceptions.StorageObjectReferenceException;
@@ -12,7 +12,7 @@ import java.sql.SQLException;
  * (higher level of abstraction) exceptions.
  */
 public class SQLExceptionTranslator
-        implements IExceptionTranslator<SQLException, Exception>
+        implements ExceptionTranslator<SQLException, Exception>
 {
     private static final String UNIQUE_VIOLATION = "23505";
     private static final String FOREIGN_KEY_VIOLATION = "23503";

@@ -1,6 +1,6 @@
 package bitimage.transport.mappers;
 
-import bitimage.domain.uploading.entities.User;
+import bitimage.uploading.entities.User;
 import bitimage.transport.dto.UserDTO;
 
 public class UserControllerMapper

@@ -2,7 +2,7 @@ package bitimage.storage.s3;
 
 import bitimage.storage.dto.FileDTO;
 import bitimage.storage.dto.FileMetadataDTO;
-import bitimage.storage.exceptions.IExceptionTranslator;
+import bitimage.storage.exceptions.ExceptionTranslator;
 import bitimage.storage.exceptions.StorageObjectAlreadyExistsException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
@@ -35,11 +35,11 @@ import java.util.stream.Collectors;
  * Adapter class that interacts with S3 filesystem.
  */
 public class S3FileSystem
-        implements IFileSystem
+        implements FileSystem
 {
     private final AmazonS3 s3Client;
     private final TransferManager s3TransferManager;
-    private final IExceptionTranslator<AmazonServiceException, RuntimeException>
+    private final ExceptionTranslator<AmazonServiceException, RuntimeException>
             exceptionTranslator;
 
     Striped<Lock> resourceLocks = Striped.lazyWeakLock(RESOURCE_LOCK_STRIPE_COUNT);
@@ -50,7 +50,7 @@ public class S3FileSystem
     private S3FileSystem(
             AmazonS3 s3Client,
             TransferManager s3TransferManager,
-            IExceptionTranslator<AmazonServiceException, RuntimeException> exceptionTranslator)
+            ExceptionTranslator<AmazonServiceException, RuntimeException> exceptionTranslator)
     {
         this.s3Client = s3Client;
         this.s3TransferManager = s3TransferManager;
@@ -58,8 +58,8 @@ public class S3FileSystem
     }
 
     public static S3FileSystem CreateNew(
-            IAwsEnv env,
-            IExceptionTranslator<AmazonServiceException, RuntimeException> exceptionTranslator)
+            AwsEnv env,
+            ExceptionTranslator<AmazonServiceException, RuntimeException> exceptionTranslator)
     {
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(
                 env.getAwsAccessID(),

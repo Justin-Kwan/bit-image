@@ -1,10 +1,10 @@
 package bitimage.eventhandling;
 
-import bitimage.domain.uploading.services.ImageUploadService;
+import bitimage.uploading.services.ImageUploadService;
 import bitimage.eventhandling.mappers.EventHandlerMapper;
 
 public class UserDeletedEventHandler
-        implements IEventHandler
+        implements EventHandler
 {
     private final EventHandlerMapper mapper;
     private final ImageUploadService service;

@@ -1,16 +1,16 @@
 package bitimage.environment;
 
-import bitimage.messaging.beanstalk.IBeanstalkEnv;
-import bitimage.storage.postgres.connection.IPostgresEnv;
-import bitimage.storage.s3.IAwsEnv;
-import bitimage.transport.middleware.ITokenCheckerEnv;
+import bitimage.messaging.beanstalk.BeanstalkEnv;
+import bitimage.storage.postgres.connection.PostgresEnv;
+import bitimage.storage.s3.AwsEnv;
+import bitimage.transport.middleware.TokenCheckerEnv;
 
 /**
  * Global environment class providing configurations to
  * several modules.
  */
 public class GlobalEnv
-        implements IPostgresEnv, IBeanstalkEnv, IAwsEnv, ITokenCheckerEnv
+        implements PostgresEnv, BeanstalkEnv, AwsEnv, TokenCheckerEnv
 {
     public String postgresUsername;
     public String postgresPassword;

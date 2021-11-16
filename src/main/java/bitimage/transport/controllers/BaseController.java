@@ -1,14 +1,14 @@
 package bitimage.transport.controllers;
 
 import bitimage.transport.exceptions.HttpExceptionHandler;
-import bitimage.transport.middleware.ITokenChecker;
+import bitimage.transport.middleware.TokenChecker;
 import io.micronaut.http.HttpResponse;
 
 public abstract class BaseController
 {
-    protected final ITokenChecker tokenChecker;
+    protected final TokenChecker tokenChecker;
 
-    protected BaseController(ITokenChecker tokenChecker)
+    protected BaseController(TokenChecker tokenChecker)
     {
         this.tokenChecker = tokenChecker;
     }
@@ -16,7 +16,7 @@ public abstract class BaseController
     /**
      * Wraps service core exception handling and translation to http responses.
      */
-    protected HttpResponse<Object> handleRequest(IRequestHandler requestHandler)
+    protected HttpResponse<Object> handleRequest(RequestHandler requestHandler)
     {
         HttpResponse<Object> httpResponse;
 
@@ -31,7 +31,7 @@ public abstract class BaseController
     }
 }
 
-interface IRequestHandler
+interface RequestHandler
 {
     HttpResponse<Object> fn()
             throws Exception;

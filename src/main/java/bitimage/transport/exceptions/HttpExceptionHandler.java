@@ -1,11 +1,11 @@
 package bitimage.transport.exceptions;
 
-import bitimage.domain.uploading.exceptions.ImageAlreadyExistsException;
-import bitimage.domain.uploading.exceptions.ImageFormatInvalidException;
-import bitimage.domain.uploading.exceptions.ImageNotFoundException;
-import bitimage.domain.uploading.exceptions.ImageSizeExceededException;
-import bitimage.domain.uploading.exceptions.UserAlreadyExistsException;
-import bitimage.domain.uploading.exceptions.UserNotFoundException;
+import bitimage.uploading.exceptions.ImageAlreadyExistsException;
+import bitimage.uploading.exceptions.ImageFormatInvalidException;
+import bitimage.uploading.exceptions.ImageNotFoundException;
+import bitimage.uploading.exceptions.ImageSizeExceededException;
+import bitimage.uploading.exceptions.UserAlreadyExistsException;
+import bitimage.uploading.exceptions.UserNotFoundException;
 import io.micronaut.http.HttpResponse;
 
 import java.util.logging.Level;

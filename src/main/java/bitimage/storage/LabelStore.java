@@ -1,7 +1,6 @@
 package bitimage.storage;
 
-import bitimage.domain.analysis.ports.ILabelStore;
-import bitimage.domain.common.entities.Label;
+import bitimage.shared.entities.Label;
 import bitimage.storage.dto.LabelDTO;
 import bitimage.storage.mappers.LabelStoreMapper;
 import bitimage.storage.postgres.dao.DAOFactory;
@@ -10,7 +9,7 @@ import bitimage.storage.postgres.dao.LabelDAO;
 import java.util.List;
 
 public class LabelStore
-        implements ILabelStore
+        implements bitimage.analysis.ports.LabelStore
 {
     private final DAOFactory daoFactory;
     private final LabelStoreMapper mapper;

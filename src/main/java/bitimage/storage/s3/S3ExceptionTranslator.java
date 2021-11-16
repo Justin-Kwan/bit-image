@@ -1,11 +1,11 @@
 package bitimage.storage.s3;
 
-import bitimage.storage.exceptions.IExceptionTranslator;
+import bitimage.storage.exceptions.ExceptionTranslator;
 import bitimage.storage.exceptions.StorageObjectNotFoundException;
 import com.amazonaws.AmazonServiceException;
 
 public class S3ExceptionTranslator
-        implements IExceptionTranslator<AmazonServiceException, RuntimeException>
+        implements ExceptionTranslator<AmazonServiceException, RuntimeException>
 {
     private static final int BUCKET_OR_OBJECT_NOT_FOUND = 404;
 

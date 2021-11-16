@@ -7,7 +7,7 @@ import com.dinstone.beanstalkc.JobConsumer;
 import com.dinstone.beanstalkc.JobProducer;
 
 public class BeanstalkMessageQueue
-        implements IMessageQueue
+        implements MessageQueue
 {
     private final BeanstalkClientFactory clientFactory;
     private final String queueName;
@@ -23,7 +23,7 @@ public class BeanstalkMessageQueue
         this.queueName = queueName;
     }
 
-    public static BeanstalkMessageQueue CreateNew(IBeanstalkEnv env)
+    public static BeanstalkMessageQueue CreateNew(BeanstalkEnv env)
     {
         Configuration config = new Configuration();
         config.setServiceHost(env.getBeanstalkHost());

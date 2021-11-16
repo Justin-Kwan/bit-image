@@ -1,10 +1,10 @@
 package bitimage.transport.controllers;
 
-import bitimage.domain.uploading.entities.User;
-import bitimage.domain.uploading.services.UserService;
+import bitimage.uploading.entities.User;
+import bitimage.uploading.services.UserService;
 import bitimage.transport.dto.UserDTO;
 import bitimage.transport.mappers.UserControllerMapper;
-import bitimage.transport.middleware.ITokenChecker;
+import bitimage.transport.middleware.TokenChecker;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -24,7 +24,7 @@ public class UserController
     public UserController(
             UserService userService,
             UserControllerMapper mapper,
-            ITokenChecker tokenChecker)
+            TokenChecker tokenChecker)
     {
         super(tokenChecker);
 

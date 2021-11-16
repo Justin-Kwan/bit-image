@@ -3,14 +3,14 @@ package bitimage.wire;
 import bitimage.classification.ImageClassifier;
 import bitimage.classification.mappers.ImageClassifierMapper;
 import bitimage.classification.rekognition.AwsImageClassifier;
-import bitimage.domain.analysis.services.ImageAnalysisService;
-import bitimage.domain.uploading.events.ImagesUploadedEvent;
-import bitimage.domain.uploading.events.UserDeletedEvent;
-import bitimage.domain.uploading.services.ImageUploadService;
-import bitimage.domain.uploading.services.UserService;
+import bitimage.analysis.services.ImageAnalysisService;
+import bitimage.uploading.events.ImagesUploadedEvent;
+import bitimage.uploading.events.UserDeletedEvent;
+import bitimage.uploading.services.ImageUploadService;
+import bitimage.uploading.services.UserService;
 import bitimage.environment.EnvReader;
 import bitimage.environment.GlobalEnv;
-import bitimage.eventhandling.IEventHandler;
+import bitimage.eventhandling.EventHandler;
 import bitimage.eventhandling.ImagesUploadedEventHandler;
 import bitimage.eventhandling.UserDeletedEventHandler;
 import bitimage.eventhandling.mappers.EventHandlerMapper;
@@ -228,9 +228,9 @@ public class Container
         return eventsToQueues;
     }
 
-    public Map<String, IEventHandler> provideMessageHandlers()
+    public Map<String, EventHandler> provideMessageHandlers()
     {
-        HashMap<String, IEventHandler> messageHandlers = new HashMap<>();
+        HashMap<String, EventHandler> messageHandlers = new HashMap<>();
 
         messageHandlers.put(
                 BeanstalkTubeNames.IMAGES_UPLOADED,

@@ -1,6 +1,6 @@
 package bitimage.storage.mappers;
 
-import bitimage.domain.uploading.entities.User;
+import bitimage.uploading.entities.User;
 import bitimage.storage.dto.UserDTO;
 
 import java.sql.Timestamp;

@@ -47,6 +47,8 @@ import java.util.logging.Logger;
 /**
  * Class responsible for wiring up entire application
  * object dependency graph.
+ *
+ * TODO: migrate to Dagger injector framework
  */
 @Factory
 public class Container

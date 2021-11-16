@@ -1,11 +1,12 @@
 package bitimage.storage.postgres.connection;
 
-public interface IPostgresEnv {
-  public String getPostgresUsername();
+public interface IPostgresEnv
+{
+    String getPostgresUsername();
 
-  public String getPostgresPassword();
+    String getPostgresPassword();
 
-  public String getPostgresHostPort();
+    String getPostgresHostPort();
 
-  public int getPostgresPoolSize();
+    int getPostgresPoolSize();
 }

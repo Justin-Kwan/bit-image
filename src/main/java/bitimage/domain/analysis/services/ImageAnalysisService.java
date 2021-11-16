@@ -8,36 +8,40 @@ import bitimage.domain.analysis.ports.IImageClassifier;
 import bitimage.domain.analysis.ports.ILabelStore;
 import bitimage.domain.common.entities.EntityID;
 import bitimage.domain.common.entities.Image;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ImageAnalysisService {
+public class ImageAnalysisService
+{
+    private final ILabelStore labelStore;
+    private final IImageClassifier imageClassifier;
 
-  private final ILabelStore labelStore;
-  private final IImageClassifier imageClassifier;
+    public ImageAnalysisService(ILabelStore labelStore, IImageClassifier imageClassifier)
+    {
+        this.labelStore = labelStore;
+        this.imageClassifier = imageClassifier;
+    }
 
-  public ImageAnalysisService(ILabelStore labelStore, IImageClassifier imageClassifier) {
-    this.labelStore = labelStore;
-    this.imageClassifier = imageClassifier;
-  }
+    public void extractImageContents(List<ExtractImageContentsCmd> cmds)
+    {
+        List<Image> images = cmds.stream()
+                .map(this::createImage)
+                .collect(Collectors.toList());
 
-  public void extractImageContents(List<ExtractImageContentsCmd> cmds) throws Exception {
-    final List<Image> images = cmds.stream().map(this::createImage).collect(Collectors.toList());
+        images.parallelStream().forEach(
+                image -> Stream.of(image)
+                        .map(new ExtractImageLabels(imageClassifier)::process)
+                        .map(new CleanImageLabels()::process)
+                        .forEach(new StoreImageLabels(labelStore)::process));
+    }
 
-    images.parallelStream()
-        .forEach(
-            image ->
-                Stream.of(image)
-                    .map(new ExtractImageLabels(this.imageClassifier)::process)
-                    .map(new CleanImageLabels()::process)
-                    .forEach(new StoreImageLabels(this.labelStore)::process));
-  }
-
-  public Image createImage(ExtractImageContentsCmd cmd) {
-    final var imageID = EntityID.CreateNew(cmd.imageID);
-    final var userID = EntityID.CreateNew(cmd.userID);
-
-    return new Image.Builder(imageID, cmd.imageName, userID).build();
-  }
+    public Image createImage(ExtractImageContentsCmd cmd)
+    {
+        return new Image.Builder(
+                EntityID.CreateNew(cmd.imageID),
+                cmd.imageName,
+                EntityID.CreateNew(cmd.userID)).build();
+    }
 }

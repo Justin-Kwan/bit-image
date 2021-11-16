@@ -7,6 +7,7 @@ package bitimage.storage.exceptions;
  * <p>ex. SQLException -> StorageObjectNotFoundException ex. AwsServiceException ->
  * StorageObjectNotFoundException
  */
-public interface IExceptionTranslator<T extends Exception, K extends Exception> {
-  public K translate(T e);
+public interface IExceptionTranslator<T extends Exception, K extends Exception>
+{
+    K translate(T e);
 }

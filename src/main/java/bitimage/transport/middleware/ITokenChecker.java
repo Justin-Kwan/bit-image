@@ -1,5 +1,7 @@
 package bitimage.transport.middleware;
 
-public interface ITokenChecker<T> {
-  public String doAuthCheck(T headers) throws Exception;
+public interface ITokenChecker<T>
+{
+    String doAuthCheck(T headers)
+            throws Exception;
 }

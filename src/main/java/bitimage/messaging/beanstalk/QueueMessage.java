@@ -2,31 +2,39 @@ package bitimage.messaging.beanstalk;
 
 import java.nio.charset.StandardCharsets;
 
-public class QueueMessage {
-  private final String message;
+public class QueueMessage
+{
+    private final String message;
 
-  protected QueueMessage(String message) {
-    this.message = message;
-  }
+    protected QueueMessage(String message)
+    {
+        this.message = message;
+    }
 
-  public static QueueMessage CreateNew(String messageStr) {
-    return new QueueMessage(messageStr);
-  }
+    public static QueueMessage CreateNew(String messageText)
+    {
+        return new QueueMessage(messageText);
+    }
 
-  public static QueueMessage CreateNew(byte[] messageBytes) {
-    final var messageStr = new String(messageBytes, StandardCharsets.UTF_8);
-    return new QueueMessage(messageStr);
-  }
+    public static QueueMessage CreateNew(byte[] messageBytes)
+    {
+        return new QueueMessage(new String(
+                messageBytes,
+                StandardCharsets.UTF_8));
+    }
 
-  public String toString() {
-    return this.message;
-  }
+    public String toString()
+    {
+        return message;
+    }
 
-  public byte[] toBytes() {
-    return this.message.getBytes();
-  }
+    public byte[] toBytes()
+    {
+        return message.getBytes();
+    }
 
-  public boolean isNull() {
-    return false;
-  }
+    public boolean isNull()
+    {
+        return false;
+    }
 }

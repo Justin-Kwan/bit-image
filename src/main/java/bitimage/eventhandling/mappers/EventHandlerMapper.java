@@ -3,53 +3,62 @@ package bitimage.eventhandling.mappers;
 import bitimage.domain.analysis.commands.ExtractImageContentsCmd;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventHandlerMapper {
+public class EventHandlerMapper
+{
+    private final static String ROOT_IMAGES_JSON_KEY = "/images";
+    private final static String IMAGE_NAME_JSON_KEY = "name";
+    private final static String USER_ID_JSON_KEY = "userID";
+    private final static String ID_JSON_KEY = "id";
 
-  private final String ROOT_IMAGES_JSON_KEY = "/images";
-  private final String IMAGE_NAME_JSON_KEY = "name";
-  private final String USER_ID_JSON_KEY = "userID";
-  private final String ID_JSON_KEY = "id";
+    private final static ObjectMapper JSON_MAPPER = new ObjectMapper();
 
-  public String mapToDeletedUserID(String message) throws Exception {
-    final var jsonMapper = new ObjectMapper();
+    public String mapToDeletedUserID(String message)
+            throws Exception
+    {
+        JsonNode deletedUserJson = JSON_MAPPER.readTree(message);
 
-    JsonNode deletedUserJson = jsonMapper.readTree(message);
+        return deletedUserJson
+                .get(USER_ID_JSON_KEY)
+                .get(ID_JSON_KEY)
+                .textValue();
+    }
 
-    return deletedUserJson.get(this.USER_ID_JSON_KEY).get(this.ID_JSON_KEY).textValue();
-  }
+    public List<ExtractImageContentsCmd> mapToExtractImageContentsCmd(String message)
+            throws Exception
+    {
+        JsonNode imagesJson = JSON_MAPPER.readTree(message);
+        List<ExtractImageContentsCmd> cmds = new ArrayList<>();
 
-  public List<ExtractImageContentsCmd> mapToExtractImageContentsCmd(String message)
-      throws Exception {
-    final var jsonMapper = new ObjectMapper();
+        imagesJson
+                .at(ROOT_IMAGES_JSON_KEY)
+                .forEach(imageJson -> {
+                    ExtractImageContentsCmd cmd = mapToExtractImageContentCmd(imageJson);
+                    cmds.add(cmd);
+                });
 
-    JsonNode imagesJson = jsonMapper.readTree(message);
-    final var cmds = new ArrayList<ExtractImageContentsCmd>();
+        return cmds;
+    }
 
-    imagesJson
-        .at(this.ROOT_IMAGES_JSON_KEY)
-        .forEach(
-            imageJson -> {
-              final var cmd = this.mapToExtractImageContentCmd(imageJson);
-              cmds.add(cmd);
-            });
+    public ExtractImageContentsCmd mapToExtractImageContentCmd(JsonNode imageJson)
+    {
+        ExtractImageContentsCmd extractImageContentsCmd = new ExtractImageContentsCmd();
 
-    return cmds;
-  }
+        extractImageContentsCmd.imageID = imageJson
+                .get(ID_JSON_KEY)
+                .get(ID_JSON_KEY)
+                .textValue();
+        extractImageContentsCmd.imageName = imageJson
+                .get(IMAGE_NAME_JSON_KEY)
+                .textValue();
+        extractImageContentsCmd.userID = imageJson
+                .get(USER_ID_JSON_KEY)
+                .get(ID_JSON_KEY)
+                .textValue();
 
-  public ExtractImageContentsCmd mapToExtractImageContentCmd(JsonNode imageJson) {
-    final var extractImageContentsCmd = new ExtractImageContentsCmd();
-
-    extractImageContentsCmd.imageID =
-        imageJson.get(this.ID_JSON_KEY).get(this.ID_JSON_KEY).textValue();
-
-    extractImageContentsCmd.imageName = imageJson.get(this.IMAGE_NAME_JSON_KEY).textValue();
-
-    extractImageContentsCmd.userID =
-        imageJson.get(this.USER_ID_JSON_KEY).get(this.ID_JSON_KEY).textValue();
-
-    return extractImageContentsCmd;
-  }
+        return extractImageContentsCmd;
+    }
 }

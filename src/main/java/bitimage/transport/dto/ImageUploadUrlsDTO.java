@@ -2,11 +2,12 @@ package bitimage.transport.dto;
 
 import java.util.List;
 
-public class ImageUploadUrlsDTO {
+public class ImageUploadUrlsDTO
+{
+    public List<ImageUploadUrlDTO> image_upload_urls;
 
-  public List<ImageUploadUrlDTO> image_upload_urls;
-
-  public ImageUploadUrlsDTO(List<ImageUploadUrlDTO> imageUploadUrlDTOs) {
-    this.image_upload_urls = imageUploadUrlDTOs;
-  }
+    public ImageUploadUrlsDTO(List<ImageUploadUrlDTO> imageUploadUrlDTOs)
+    {
+        image_upload_urls = List.copyOf(imageUploadUrlDTOs);
+    }
 }

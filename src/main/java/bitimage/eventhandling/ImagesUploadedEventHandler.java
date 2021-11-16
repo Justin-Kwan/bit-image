@@ -6,18 +6,24 @@ import bitimage.eventhandling.mappers.EventHandlerMapper;
 
 import java.util.List;
 
-public class ImagesUploadedEventHandler implements IEventHandler {
+public class ImagesUploadedEventHandler
+        implements IEventHandler
+{
+    private final EventHandlerMapper mapper;
+    private final ImageAnalysisService service;
 
-  private final EventHandlerMapper mapper;
-  private final ImageAnalysisService service;
+    public ImagesUploadedEventHandler(
+            EventHandlerMapper mapper,
+            ImageAnalysisService service)
+    {
+        this.mapper = mapper;
+        this.service = service;
+    }
 
-  public ImagesUploadedEventHandler(EventHandlerMapper mapper, ImageAnalysisService service) {
-    this.mapper = mapper;
-    this.service = service;
-  }
-
-  public void handle(String message) throws Exception {
-    final List<ExtractImageContentsCmd> cmds = this.mapper.mapToExtractImageContentsCmd(message);
-    this.service.extractImageContents(cmds);
-  }
+    public void handle(String message)
+            throws Exception
+    {
+        List<ExtractImageContentsCmd> cmds = mapper.mapToExtractImageContentsCmd(message);
+        service.extractImageContents(cmds);
+    }
 }

@@ -1,9 +1,10 @@
 package bitimage.storage.s3;
 
-public interface IAwsEnv {
-  public String getAwsAccessID();
+public interface IAwsEnv
+{
+    String getAwsAccessID();
 
-  public String getAwsAccessKey();
+    String getAwsAccessKey();
 
-  public String getAwsRegion();
+    String getAwsRegion();
 }

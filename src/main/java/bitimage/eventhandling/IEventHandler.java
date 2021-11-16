@@ -1,5 +1,7 @@
 package bitimage.eventhandling;
 
-public interface IEventHandler {
-  public void handle(String message) throws Exception;
+public interface IEventHandler
+{
+    void handle(String message)
+            throws Exception;
 }

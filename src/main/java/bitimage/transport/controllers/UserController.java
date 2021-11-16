@@ -10,45 +10,50 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Post;
+
 import javax.inject.Inject;
 
 @Controller(BaseEndpoints.USERS)
-public class UserController extends BaseController {
+public class UserController
+        extends BaseController
+{
+    private final UserService userService;
+    private final UserControllerMapper mapper;
 
-  private final UserService userService;
-  private final UserControllerMapper mapper;
+    @Inject
+    public UserController(
+            UserService userService,
+            UserControllerMapper mapper,
+            ITokenChecker tokenChecker)
+    {
+        super(tokenChecker);
 
-  @Inject
-  public UserController(
-      UserService userService, UserControllerMapper mapper, ITokenChecker tokenChecker) {
-    super(tokenChecker);
+        this.userService = userService;
+        this.mapper = mapper;
+    }
 
-    this.userService = userService;
-    this.mapper = mapper;
-  }
+    @Post()
+    public HttpResponse<Object> createUser(HttpHeaders headers)
+    {
+        return super.handleRequest(() -> {
+            String user_id = tokenChecker.doAuthCheck(headers);
 
-  @Post()
-  public HttpResponse<Object> createUser(HttpHeaders headers) {
+            User user = userService.createUser(user_id);
+            UserDTO userDTO = mapper.mapToUserDTO(user);
 
-    return super.handleRequest(() -> {
-      final String user_id = super.tokenChecker.doAuthCheck(headers);
+            return HttpResponse.created(userDTO);
+        });
+    }
 
-      final User user = this.userService.createUser(user_id);
-      final UserDTO userDTO = this.mapper.mapToUserDTO(user);
+    @Delete()
+    public HttpResponse<Object> deleteUser(HttpHeaders headers)
+    {
+        return super.handleRequest(() -> {
+            String user_id = tokenChecker.doAuthCheck(headers);
 
-      return HttpResponse.created(userDTO);
-    });
-  }
+            userService.deleteUser(user_id);
 
-  @Delete()
-  public HttpResponse<Object> deleteUser(HttpHeaders headers) {
-
-    return super.handleRequest(() -> {
-      final String user_id = super.tokenChecker.doAuthCheck(headers);
-
-      this.userService.deleteUser(user_id);
-
-      return HttpResponse.noContent();
-    });
-  }
+            return HttpResponse.noContent();
+        });
+    }
 }
